@@ -9,6 +9,7 @@
       "lint": "npx @biomejs/biome lint --write",
       "format": "npx @biomejs/biome format --write",
       "check": "npx @biomejs/biome check --write",
+      "typecheck": "tsc --noEmit -p tsconfig.app.json",
       "prepare": "husky",
       "preview": "vite preview"
    },
@@ -41,8 +42,7 @@
    },
    "lint-staged": {
       "src/**/*.{js,jsx,ts,tsx,css}": [
-         "npm run check",
-         "git add ."
+         "npm run check"
       ]
    }
 }
