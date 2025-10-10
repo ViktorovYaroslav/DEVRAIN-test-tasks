@@ -1,0 +1,13 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "docker-build-and-run-api",
+			"type": "shell",
+			"command": "powershell -NoProfile -ExecutionPolicy Bypass -Command \"docker build -t recipe-assistant-backend .; docker run --rm -p 8000:8000 --env-file .\\.env.local recipe-assistant-backend\"",
+			"isBackground": false,
+			"problemMatcher": [],
+			"group": "build"
+		}
+	]
+}

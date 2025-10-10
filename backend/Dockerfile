@@ -11,4 +11,6 @@ COPY apps ./apps
 COPY scripts ./scripts
 
 # Default command runs the Task 2 smoke test; for API later, override CMD to run uvicorn
-CMD ["python", "scripts/smoke_task2.py"]
+# Default command: run API server
+EXPOSE 8000
+CMD ["uvicorn", "apps.api.main:app", "--host", "0.0.0.0", "--port", "8000"]
