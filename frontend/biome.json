@@ -1,0 +1,80 @@
+{
+   "$schema": "https://biomejs.dev/schemas/2.2.5/schema.json",
+   "vcs": {
+      "enabled": false,
+      "clientKind": "git",
+      "useIgnoreFile": false
+   },
+   "files": {
+      "ignoreUnknown": false,
+      "includes": ["./src/**/*.{js,ts,jsx,tsx,d.ts,css}"]
+   },
+   "formatter": {
+      "enabled": true,
+      "indentStyle": "tab",
+      "lineWidth": 120,
+      "bracketSpacing": true,
+      "attributePosition": "auto"
+   },
+   "assist": {
+      "enabled": true,
+      "actions": {
+         "source": {
+            "organizeImports": "off"
+         }
+      }
+   },
+   "linter": {
+      "enabled": true,
+      "rules": {
+         "recommended": true,
+         "suspicious": {
+            "noVar": "error",
+            "noArrayIndexKey": "info",
+            "noConsole": "warn",
+            "noUnknownAtRules": "off"
+         },
+         "style": {
+            "useConst": "error",
+            "noNonNullAssertion": "off",
+            "noYodaExpression": "error",
+            "useNumberNamespace": "off"
+         },
+         "a11y": {
+            "useSemanticElements": "info",
+            "noSvgWithoutTitle": "info",
+            "useMediaCaption": "off"
+         },
+         "performance": {
+            "noAccumulatingSpread": "error"
+         },
+         "correctness": {
+            "noUnusedVariables": "error",
+            "useHookAtTopLevel": "error",
+            "useJsxKeyInIterable": "error",
+            "noUnusedImports": "warn",
+            "useExhaustiveDependencies": "info",
+            "useUniqueElementIds": "off"
+         },
+         "complexity": {
+            "noForEach": "off",
+            "noImportantStyles": "off"
+         },
+         "nursery": {
+            "useSortedClasses": {
+               "level": "info",
+               "fix": "safe",
+               "options": {}
+            }
+         }
+      }
+   },
+   "javascript": {
+      "formatter": {
+         "jsxQuoteStyle": "double",
+         "semicolons": "always",
+         "trailingCommas": "es5",
+         "arrowParentheses": "always"
+      }
+   }
+}
