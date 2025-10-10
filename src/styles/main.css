@@ -24,4 +24,24 @@
 	--color-gray-700: #404040;
 	--color-gray-800: #262626;
 	--color-gray-900: #171717;
+
+	/* FONTS */
+	--font-montserrat: "Montserrat", sans-serif;
+}
+
+html,
+body {
+	@apply h-full text-gray-700 font-montserrat;
+}
+
+a,
+button {
+	@apply inline-block;
+	@apply cursor-pointer;
+	@apply transition duration-200 ease-out;
+}
+
+svg {
+	@apply text-gray-500;
+	@apply transition duration-200 ease-out;
 }
