@@ -20,11 +20,13 @@
       "task2:test": "cd backend && python scripts/smoke_task2.py"
    },
    "dependencies": {
+      "@headlessui/react": "^2.2.9",
       "@heroicons/react": "^2.2.0",
       "clsx": "^2.1.1",
       "react": "^19.1.1",
       "react-dom": "^19.1.1",
       "react-router": "^7.9.4",
+      "react-textarea-autosize": "^8.5.9",
       "tailwindcss": "^4.1.14"
    },
    "devDependencies": {

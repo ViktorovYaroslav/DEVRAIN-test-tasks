@@ -15,7 +15,7 @@ const NavigationLink: FC<NavigationLinkProps> = ({ to, label, Icon, ...props }) 
 			to={to}
 			{...props}
 			className={clsx(
-				"!flex group items-center gap-2 rounded-md px-3 py-2 font-medium uppercase hover:bg-primary-50 hover:text-primary-600",
+				"!flex group items-center gap-2 rounded-md p-2 font-medium uppercase hover:bg-primary-50 hover:text-primary-600",
 				{
 					"bg-primary-50 text-gray-900/70": isCurrentPath,
 				}

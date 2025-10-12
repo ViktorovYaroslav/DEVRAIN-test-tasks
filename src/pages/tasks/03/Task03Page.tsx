@@ -1,6 +1,6 @@
 import type { FC } from "react";
 
-export const Task03Page: FC = () => {
+const Task03Page: FC = () => {
 	return <>Task03</>;
 };
 
