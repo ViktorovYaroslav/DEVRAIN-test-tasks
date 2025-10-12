@@ -1,0 +1,1 @@
+export const RECIPE_ASSISTANT_URL = import.meta.env.VITE_RECIPE_ASSISTANT_URL;
