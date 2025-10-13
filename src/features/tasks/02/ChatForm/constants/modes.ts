@@ -1,12 +1,12 @@
 import type { Option } from "@/types/options";
 
-export const MODES: Option[] = [
+export const MODES: Option<"instruction" | "ingredients">[] = [
 	{
 		label: "Instruction",
 		option: "instruction",
 	},
 	{
-		label: "Ingradients",
-		option: "ingradients",
+		label: "Ingredients",
+		option: "ingredients",
 	},
 ];

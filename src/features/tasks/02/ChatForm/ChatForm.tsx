@@ -9,20 +9,34 @@ import { Button, ButtonGroup } from "@/components/ui/buttons";
 import { MODES } from "./constants/modes";
 import { CHAT_FORM_VALIDATION_SCHEMA } from "./constants/validationSchema";
 import { CHAT_FORM_INITIAL_VALUES } from "./constants/initial";
-//import { fetchRecipeIngredients, fetchRecipeInstructions } from "@/api/task2/endpoints";
+import { tryCatch } from "@/utils/helpers/promises/tryCatch";
+import { fetchRecipeIngredients, fetchRecipeInstructions } from "@/api/task2/endpoints";
 
 import type { FC } from "react";
 
 const ChatForm: FC = () => {
-	const [_, setSelectedOption] = useState(MODES[0].option);
+	const [mode, setMode] = useState(MODES[0].option);
 
-	const { Field, handleSubmit } = useForm({
+	const { Field, Subscribe, handleSubmit, reset } = useForm({
 		defaultValues: CHAT_FORM_INITIAL_VALUES,
 		validators: {
 			onChange: CHAT_FORM_VALIDATION_SCHEMA,
 		},
-		onSubmit: async (values) => {
-			console.log(values);
+		onSubmit: async ({ value }) => {
+			let callback = async () => {};
+
+			if (mode === "instruction") callback = async () => fetchRecipeInstructions(value.message);
+			if (mode === "ingredients") callback = async () => fetchRecipeIngredients(value.message);
+
+			const [data, error] = await tryCatch(callback());
+
+			if (error) {
+				console.error(error);
+				return;
+			}
+
+			reset();
+			return data;
 		},
 	});
 
@@ -59,14 +73,19 @@ const ChatForm: FC = () => {
 						)}
 					/>
 				</div>
-				<Button type="submit" className="!text-white" square>
-					<PaperAirplaneIcon className="size-5" />
-				</Button>
+
+				<Subscribe selector={(state) => [state.canSubmit, state.isSubmitting, state.isPristine]}>
+					{([canSubmit, isSubmitting, isPristine]) => (
+						<Button type="submit" className="!text-white" square disabled={isPristine || !canSubmit || isSubmitting}>
+							<PaperAirplaneIcon className="size-5" />
+						</Button>
+					)}
+				</Subscribe>
 			</form>
 
 			<div className="ml-[calc(1.5rem+1px)] flex items-center gap-3">
 				<p className="text-muted-foreground text-sm">Mode:</p>
-				<ButtonGroup items={MODES} onChange={setSelectedOption} />
+				<ButtonGroup items={MODES} onChange={setMode} />
 			</div>
 		</div>
 	);
