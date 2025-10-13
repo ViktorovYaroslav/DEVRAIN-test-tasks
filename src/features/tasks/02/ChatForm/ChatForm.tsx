@@ -13,6 +13,7 @@ import { CHAT_FORM_INITIAL_VALUES } from "./constants/initial";
 import { tryCatch } from "@/utils/helpers/promises/tryCatch";
 import { fetchRecipeIngredients, fetchRecipeInstructions } from "@/api/tasks/02/endpoints";
 import { useRecipes } from "../utils/hooks/useRecipes";
+import { sendOnEnter } from "@/utils/helpers/form/sendOnEnter";
 
 import type { FC } from "react";
 import type { RecipeItem } from "@/types/query/tasks/02";
@@ -66,6 +67,7 @@ const ChatForm: FC = () => {
 
 			<form
 				className="card__material flex w-full items-end gap-2"
+				onKeyDown={sendOnEnter}
 				onSubmit={(e) => {
 					e.preventDefault();
 					e.stopPropagation();
