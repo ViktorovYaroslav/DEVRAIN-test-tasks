@@ -54,7 +54,8 @@
             "useJsxKeyInIterable": "error",
             "noUnusedImports": "warn",
             "useExhaustiveDependencies": "info",
-            "useUniqueElementIds": "off"
+            "useUniqueElementIds": "off",
+            "noChildrenProp": "off"
          },
          "complexity": {
             "noForEach": "off",
