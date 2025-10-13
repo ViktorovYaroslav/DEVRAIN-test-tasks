@@ -1,5 +1,7 @@
 import { RECIPE_ASSISTANT_TASK2_INGREDIENTS_URL, RECIPE_ASSISTANT_TASK2_INSTRUCTIONS_URL } from "./urls";
 
+import type { RecipeIngredients, RecipeInstruction } from "@/types/query/tasks/02";
+
 export const fetchRecipeInstructions = async (title: string) => {
 	const response = await fetch(RECIPE_ASSISTANT_TASK2_INSTRUCTIONS_URL, {
 		method: "POST",
@@ -13,7 +15,7 @@ export const fetchRecipeInstructions = async (title: string) => {
 		throw new Error("Failed to fetch recipe instructions");
 	}
 
-	return response.json();
+	return response.json() as Promise<RecipeInstruction>;
 };
 
 export const fetchRecipeIngredients = async (title: string) => {
@@ -29,5 +31,5 @@ export const fetchRecipeIngredients = async (title: string) => {
 		throw new Error("Failed to fetch recipe ingredients");
 	}
 
-	return response.json();
+	return response.json() as Promise<RecipeIngredients>;
 };

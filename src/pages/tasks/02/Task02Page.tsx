@@ -1,10 +1,11 @@
-import { ChatForm } from "@/features/tasks/02/ChatForm";
+import { ChatForm, RecipeView } from "@/features/tasks/02";
 
 import type { FC } from "react";
 
 const Task02Page: FC = () => {
 	return (
-		<div className="flex size-full items-center justify-center">
+		<div className="flex size-full flex-col items-center justify-center">
+			<RecipeView />
 			<ChatForm />
 		</div>
 	);

@@ -2,6 +2,7 @@ import { useState } from "react";
 
 import { PaperAirplaneIcon } from "@heroicons/react/24/outline";
 import { useForm } from "@tanstack/react-form";
+import { Transition } from "@headlessui/react";
 
 import { TextArea } from "@/components/ui/inputs/TextArea";
 import { Button, ButtonGroup } from "@/components/ui/buttons";
@@ -10,12 +11,16 @@ import { MODES } from "./constants/modes";
 import { CHAT_FORM_VALIDATION_SCHEMA } from "./constants/validationSchema";
 import { CHAT_FORM_INITIAL_VALUES } from "./constants/initial";
 import { tryCatch } from "@/utils/helpers/promises/tryCatch";
-import { fetchRecipeIngredients, fetchRecipeInstructions } from "@/api/task2/endpoints";
+import { fetchRecipeIngredients, fetchRecipeInstructions } from "@/api/tasks/02/endpoints";
+import { useRecipes } from "../utils/hooks/useRecipes";
 
 import type { FC } from "react";
+import type { RecipeItem } from "@/types/query/tasks/02";
 
 const ChatForm: FC = () => {
 	const [mode, setMode] = useState(MODES[0].option);
+
+	const { data: recipes, loadNewRecipe, setNewRecipe, setLoadNewRecipe } = useRecipes();
 
 	const { Field, Subscribe, handleSubmit, reset } = useForm({
 		defaultValues: CHAT_FORM_INITIAL_VALUES,
@@ -23,10 +28,12 @@ const ChatForm: FC = () => {
 			onChange: CHAT_FORM_VALIDATION_SCHEMA,
 		},
 		onSubmit: async ({ value }) => {
-			let callback = async () => {};
+			setLoadNewRecipe(true);
 
-			if (mode === "instruction") callback = async () => fetchRecipeInstructions(value.message);
-			if (mode === "ingredients") callback = async () => fetchRecipeIngredients(value.message);
+			let callback = async (): Promise<RecipeItem | null> => null;
+
+			if (mode === "instruction") callback = () => fetchRecipeInstructions(value.message);
+			if (mode === "ingredients") callback = () => fetchRecipeIngredients(value.message);
 
 			const [data, error] = await tryCatch(callback());
 
@@ -36,13 +43,26 @@ const ChatForm: FC = () => {
 			}
 
 			reset();
-			return data;
+
+			if (data) {
+				setNewRecipe(data);
+			}
 		},
 	});
 
 	return (
 		<div className="w-full max-w-3xl space-y-3">
-			<h1 className="text-center font-light text-2xl">What do you want to cook today?</h1>
+			<Transition
+				show={!loadNewRecipe && !recipes}
+				enter="transition-opacity duration-300"
+				enterFrom="opacity-0"
+				enterTo="opacity-100"
+				leave="transition-opacity duration-300"
+				leaveFrom="opacity-100"
+				leaveTo="opacity-0"
+			>
+				<h1 className="text-center font-light text-2xl">What do you want to cook today?</h1>
+			</Transition>
 
 			<form
 				className="card__material flex w-full items-end gap-2"
@@ -50,7 +70,9 @@ const ChatForm: FC = () => {
 					e.preventDefault();
 					e.stopPropagation();
 
-					handleSubmit();
+					handleSubmit().finally(() => {
+						setLoadNewRecipe(false);
+					});
 				}}
 			>
 				<div className="grow">
@@ -62,7 +84,11 @@ const ChatForm: FC = () => {
 								value={field.state.value}
 								onBlur={field.handleBlur}
 								onChange={(e) => field.handleChange(e.target.value)}
-								placeholder="I need a recipe with chicken, rice and broccoli"
+								placeholder={
+									mode === "instruction"
+										? "I need a recipe with chicken, rice and broccoli"
+										: "I have eggs, milk and flour, what can I cook?"
+								}
 								id="task2-chat-form"
 								label="message"
 								hiddenLabel
@@ -76,7 +102,17 @@ const ChatForm: FC = () => {
 
 				<Subscribe selector={(state) => [state.canSubmit, state.isSubmitting, state.isPristine]}>
 					{([canSubmit, isSubmitting, isPristine]) => (
-						<Button type="submit" className="!text-white" square disabled={isPristine || !canSubmit || isSubmitting}>
+						<Button
+							type="submit"
+							className="!text-white"
+							square
+							disabled={isPristine || !canSubmit || isSubmitting}
+							loading={isSubmitting}
+							loadingText=""
+							spinnerProps={{
+								size: "md",
+							}}
+						>
 							<PaperAirplaneIcon className="size-5" />
 						</Button>
 					)}

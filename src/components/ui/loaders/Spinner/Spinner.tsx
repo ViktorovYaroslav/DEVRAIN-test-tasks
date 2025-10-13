@@ -18,8 +18,8 @@ const Spinner: FC<SpinnerProps> = (props) => {
 					},
 					{
 						"size-4": size === "sm",
-						"size-6": size === "md",
-						"size-8": size === "lg",
+						"size-5": size === "md",
+						"size-7": size === "lg",
 					}
 				)}
 				viewBox="0 0 100 101"
