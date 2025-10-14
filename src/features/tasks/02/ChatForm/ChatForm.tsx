@@ -12,8 +12,8 @@ import { CHAT_FORM_VALIDATION_SCHEMA } from "./constants/validationSchema";
 import { CHAT_FORM_INITIAL_VALUES } from "./constants/initial";
 import { tryCatch } from "@/utils/helpers/promises/tryCatch";
 import { fetchRecipeIngredients, fetchRecipeInstructions } from "@/api/tasks/02/endpoints";
-import { useRecipes } from "../utils/hooks/useRecipes";
 import { sendOnEnter } from "@/utils/helpers/form/sendOnEnter";
+import { useRecipes } from "../context/activeRecipeIndex/hooks";
 
 import type { FC } from "react";
 import type { RecipeItem } from "@/types/query/tasks/02";
@@ -21,7 +21,13 @@ import type { RecipeItem } from "@/types/query/tasks/02";
 const ChatForm: FC = () => {
 	const [mode, setMode] = useState(MODES[0].option);
 
-	const { data: recipes, loadNewRecipe, setNewRecipe, setLoadNewRecipe } = useRecipes();
+	const {
+		query: { data: recipes },
+		recipesLoading,
+		setActiveRecipeIndex,
+		setNewRecipe,
+		setRecipesLoading,
+	} = useRecipes();
 
 	const { Field, Subscribe, handleSubmit, reset } = useForm({
 		defaultValues: CHAT_FORM_INITIAL_VALUES,
@@ -29,7 +35,7 @@ const ChatForm: FC = () => {
 			onChange: CHAT_FORM_VALIDATION_SCHEMA,
 		},
 		onSubmit: async ({ value }) => {
-			setLoadNewRecipe(true);
+			setRecipesLoading(true);
 
 			let callback = async (): Promise<RecipeItem | null> => null;
 
@@ -47,14 +53,15 @@ const ChatForm: FC = () => {
 
 			if (data) {
 				setNewRecipe(data);
+				setActiveRecipeIndex(recipes ? recipes.length : 0);
 			}
 		},
 	});
 
 	return (
-		<div className="w-full max-w-3xl space-y-3">
+		<div className="relative w-full max-w-3xl space-y-3">
 			<Transition
-				show={!loadNewRecipe && !recipes}
+				show={!recipesLoading && !recipes}
 				enter="transition-opacity duration-300"
 				enterFrom="opacity-0"
 				enterTo="opacity-100"
@@ -62,7 +69,9 @@ const ChatForm: FC = () => {
 				leaveFrom="opacity-100"
 				leaveTo="opacity-0"
 			>
-				<h1 className="text-center font-light text-2xl">What do you want to cook today?</h1>
+				<h1 className="-top-10 -translate-x-1/2 absolute left-1/2 w-max text-center font-light text-2xl">
+					What do you want to cook today?
+				</h1>
 			</Transition>
 
 			<form
@@ -73,7 +82,7 @@ const ChatForm: FC = () => {
 					e.stopPropagation();
 
 					handleSubmit().finally(() => {
-						setLoadNewRecipe(false);
+						setRecipesLoading(false);
 					});
 				}}
 			>

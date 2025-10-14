@@ -1,6 +1,7 @@
 @import "tailwindcss";
 
 @import "./components/cards";
+@import "./components/loaders";
 
 @theme {
 	/* PRIMARY */

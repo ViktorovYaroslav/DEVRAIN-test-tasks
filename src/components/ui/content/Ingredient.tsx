@@ -20,7 +20,7 @@ const Ingredient: FC<Props> = ({ name, quantity, unit }) => {
 	}, [name]);
 
 	return (
-		<div className="card__material !p-0 flex overflow-hidden">
+		<div className="card__material !p-0 flex min-h-[5.125rem] overflow-hidden">
 			{image && (
 				<img
 					src={image.urls.small || image.urls.regular}
