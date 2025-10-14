@@ -17,7 +17,7 @@ export const getClasses: GetClasses = (options, className?: CommonProps["classNa
 	};
 
 	return clsx(
-		"relative inline-flex items-center justify-center gap-2",
+		"relative !inline-flex items-center justify-center gap-2",
 		"rounded-md border-none",
 		"text-base font-medium",
 		"transition duration-200 ease-in-out cursor-pointer",

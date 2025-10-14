@@ -1,6 +1,6 @@
 //instructions output: {{"title": string, "recipe": string, "steps": [string], "notes": [string]}}
 export const Task02Summary = `
-## Task 02 Summary
+## Task 02 Summary + DEMO
 
 1. As a **main LLM** were choosing \`claude-3-5-haiku-latest\`
 2. **Why this model?** 

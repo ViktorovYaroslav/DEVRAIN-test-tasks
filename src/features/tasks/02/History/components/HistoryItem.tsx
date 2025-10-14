@@ -24,8 +24,7 @@ const HistoryItem: FC<Props> = ({ currentIndex, recipe }) => {
 			)}
 			onClick={() => setActiveRecipeIndex(currentIndex)}
 		>
-			{recipe.title}
-			<p>({"ingredients" in recipe ? "ingredients" : "recipe"})</p>
+			{recipe.title} <span>({"ingredients" in recipe ? "ingredients" : "recipe"})</span>
 		</button>
 	);
 };
