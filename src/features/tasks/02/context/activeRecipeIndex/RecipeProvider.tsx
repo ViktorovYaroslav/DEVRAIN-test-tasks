@@ -12,7 +12,7 @@ import type { RecipeContextType } from "./types";
 import type { UseQueryResult } from "@tanstack/react-query";
 
 export const RecipeContext = createContext<RecipeContextType>({
-	activeRecipeIndex: 0,
+	activeRecipeIndex: Infinity,
 	recipesLoading: false,
 	query: {} as UseQueryResult<RecipeItem[] | null>,
 	setNewRecipe: () => {},
@@ -21,16 +21,16 @@ export const RecipeContext = createContext<RecipeContextType>({
 });
 
 export const RecipeProvider: FC<PropsWithChildren> = ({ children }) => {
-	const [activeRecipeIndex, setActiveRecipeIndex] = useState(0);
-	const [recipesLoading, setRecipesLoading] = useState(false);
-
-	const queryClient = useQueryClient();
-
 	const query = useQuery<RecipeItem[] | null>({
 		queryKey: [TASK2_QUERY_KEY],
 		queryFn: async () => null,
 		enabled: false,
 	});
+
+	const [activeRecipeIndex, setActiveRecipeIndex] = useState(query.data ? query.data.length - 1 : 0);
+	const [recipesLoading, setRecipesLoading] = useState(false);
+
+	const queryClient = useQueryClient();
 
 	const setNewRecipe = (recipe: RecipeItem) => {
 		queryClient.setQueryData<RecipeItem[]>([TASK2_QUERY_KEY], (prev) => (prev ? [...prev, recipe] : [recipe]));

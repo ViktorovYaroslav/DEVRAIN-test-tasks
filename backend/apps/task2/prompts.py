@@ -1,47 +1,24 @@
 COOK_INSTR_SYSTEM = (
-    "Ты — кулинарный помощник. Отвечай только валидным JSON без пояснений. "
-    "Если не уверена — всё равно верни JSON по схеме, пустые поля заполняй пустыми строками или списками."
+    "You are a culinary assistant. Please respond only with valid JSON without any explanation."
+    "If you're not sure, return the JSON according to the schema anyway, filling empty fields with empty strings or lists."
 )
 
 COOK_INSTR_USER = (
     """
-    Сгенерируй пошаговые инструкции для рецепта с названием: "{title}".
-    Верни JSON со схемой: {{"title": string, "recipe": string, "steps": [string], "notes": [string]}}
+    Generate step-by-step instructions for the recipe titled: "{title}".
+    Return JSON with the schema: {{"title": string, "recipe": string, "steps": [string], "notes": [string]}}
     """.strip()
 )
 
 INGR_SYSTEM = (
-    "Ты — кулинарный помощник. Отвечай только валидным JSON без пояснений."
+    "You are a culinary assistant. Please respond only with valid JSON without any explanation."
 )
 
 INGR_USER = (
     """
-    Список ингредиентов для рецепта с названием: "{title}".
-    Верни JSON: {{"title": string, "ingredients": [{{"name": string, "quantity": string, "unit": string}}]}}
-    Если нет точных количеств — оставь quantity и unit пустыми строками.
+    List of ingredients for the recipe titled: "{title}".
+    Return JSON with the schema: {{"title": string, "ingredients": [{{"name": string, "quantity": string, "unit": string}}]}}
+    If there are no exact quantities, leave quantity and unit as empty strings.
     """.strip()
 )
 
-# Baseline (без RAG): рекомендации по списку ингредиентов
-RECOMMEND_SYSTEM = (
-        "Ты — кулинарный помощник. Отвечай только валидным JSON без пояснений. "
-        "Предлагай простые рецепты, используя ТОЛЬКО предоставленные ингредиенты; если чего-то не хватает — укажи это в missing_ingredients."
-)
-
-RECOMMEND_USER = (
-        """
-        У меня есть такие ингредиенты: {ingredients}.
-        Предложи 3-5 рецептов, которые я могу приготовить. Верни JSON:
-        {{
-            "query_ingredients": [string],
-            "recommendations": [
-                {{
-                    "title": string,
-                    "why": string,
-                    "missing_ingredients": [string]
-                }}
-            ]
-        }}
-        Если рецепт требует только часть продуктов — это нормально, главное не придумывай лишних.
-        """.strip()
-)

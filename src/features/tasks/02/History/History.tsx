@@ -21,7 +21,7 @@ const History: FC = () => {
 			leaveFrom="opacity-100"
 			leaveTo="opacity-0"
 		>
-			<div className="card__material fixed top-4 right-4 w-full max-w-xs">
+			<div className="card__material">
 				<ul className="flex flex-col-reverse gap-0.5">
 					{recipes?.map((recipe, index) => (
 						<li key={recipe.title}>

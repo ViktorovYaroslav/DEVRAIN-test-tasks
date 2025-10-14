@@ -3,7 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field
 from typing import List, Optional, Any, Dict
 
-from apps.task2.task import cooking_instructions, required_ingredients, baseline_recommend_recipes
+from apps.task2.task import cooking_instructions, required_ingredients
 
 
 class TitleRequest(BaseModel):
@@ -41,6 +41,3 @@ def post_required_ingredients(body: TitleRequest) -> Any:
     return required_ingredients(body.title)
 
 
-@app.post("/recommendations/baseline")
-def post_baseline_recommendations(body: IngredientsRequest) -> Any:
-    return baseline_recommend_recipes(body.ingredients)

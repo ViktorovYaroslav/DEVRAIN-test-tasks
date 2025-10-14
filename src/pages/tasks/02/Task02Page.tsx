@@ -1,4 +1,4 @@
-import { ChatForm, RecipeView, History } from "@/features/tasks/02";
+import { ChatForm, RecipeView, History, TaskSummary } from "@/features/tasks/02";
 import { RecipeProvider } from "@/features/tasks/02/context/activeRecipeIndex";
 
 import type { FC } from "react";
@@ -9,7 +9,10 @@ const Task02Page: FC = () => {
 			<RecipeProvider>
 				<RecipeView />
 				<ChatForm />
-				<History />
+				<div className="fixed top-4 right-4 flex w-full max-w-xs flex-col gap-4">
+					<TaskSummary />
+					<History />
+				</div>
 			</RecipeProvider>
 		</div>
 	);
