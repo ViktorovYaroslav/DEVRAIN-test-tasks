@@ -9,7 +9,11 @@ interface Props {
 }
 
 const MarkdownWrapper: FC<Props> = ({ children }) => {
-	return <Markdown components={config}>{children}</Markdown>;
+	return (
+		<div className="markdown-wrapper">
+			<Markdown components={config}>{children}</Markdown>
+		</div>
+	);
 };
 
 export default MarkdownWrapper;

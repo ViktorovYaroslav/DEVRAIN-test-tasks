@@ -21,7 +21,7 @@ export const TaskSummary: FC = () => {
 			</Button>
 
 			<Modal isOpen={isOpen} close={() => setIsOpen(false)}>
-				<div className="content">
+				<div className="markdown-wrapper">
 					<MarkdownWrapper>{Task02Summary}</MarkdownWrapper>
 				</div>
 			</Modal>

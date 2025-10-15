@@ -17,7 +17,9 @@
       "backend:docker:stop": "docker stop recipe-assistant-backend",
       "backend:docker:logs": "docker logs -f recipe-assistant-backend",
       "dev:full": "concurrently \"npm run backend:docker:run\" \"npm run dev\"",
-      "task2:test": "cd backend && python scripts/smoke_task2.py"
+   "task2:test": "cd backend && python scripts/smoke_task2.py",
+   "task3:test": "docker run --rm --env-file backend/.env.local -v \"%cd%\\backend:/app\" -w /app python:3.11-slim bash -lc \"pip install --no-cache-dir -r requirements.txt && python scripts/smoke_task3.py\"",
+   "qdrant:upload:mini": "docker run --rm --env-file backend/.env.local -v \"%cd%\\backend:/app\" -w /app python:3.11-slim bash -lc \"pip install --no-cache-dir -r requirements.txt && python scripts/upload_to_qdrant.py --input data/mini_recipes.csv --collection recipes --limit 0\""
    },
    "dependencies": {
       "@headlessui/react": "^2.2.9",

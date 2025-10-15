@@ -4,6 +4,7 @@ from pydantic import BaseModel, Field
 from typing import List, Optional, Any, Dict
 
 from apps.task2.task import cooking_instructions, required_ingredients
+from apps.task3.task import recommend_recipes, rag_cooking_instructions, rag_required_ingredients
 
 
 class TitleRequest(BaseModel):
@@ -39,5 +40,17 @@ def post_instructions(body: TitleRequest) -> Any:
 @app.post("/task2/ingredients")
 def post_required_ingredients(body: TitleRequest) -> Any:
     return required_ingredients(body.title)
+
+@app.post("/task3/recommend")
+def post_task3_recommend(body: IngredientsRequest) -> Any:
+    return recommend_recipes(body.ingredients)
+
+@app.post("/task3/instructions")
+def post_task3_instructions(body: TitleRequest) -> Any:
+    return rag_cooking_instructions(body.title)
+
+@app.post("/task3/ingredients")
+def post_task3_ingredients(body: TitleRequest) -> Any:
+    return rag_required_ingredients(body.title)
 
 

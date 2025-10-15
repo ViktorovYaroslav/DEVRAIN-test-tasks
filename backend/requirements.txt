@@ -8,5 +8,14 @@ anthropic==0.34.0
 # Ensure httpx version compatible with anthropic's client wrapper (proxies kwarg)
 httpx==0.25.2
 
-# Note: RAG dependencies (sentence-transformers, scikit-learn, pandas) will be added later
-# to avoid Windows build issues during Task 2.
+# RAG + Vector store (Qdrant) dependencies
+numpy==1.26.4
+pandas==2.2.2
+# Pin Hugging Face stack compatible with sentence-transformers 2.2.2
+# Newer huggingface_hub removed cached_download used by s-t 2.2.x
+huggingface-hub==0.13.4
+transformers==4.28.1
+tokenizers==0.13.3
+sentence-transformers==2.2.2
+qdrant-client==1.10.1
+tqdm==4.66.4
