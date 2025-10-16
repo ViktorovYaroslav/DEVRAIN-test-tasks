@@ -7,6 +7,7 @@ RAG_RECOMMEND_USER = (
     """
     User ingredients: [{ingredients}].
     From the CONTEXT recipes (title, ingredients, ner), suggest best matching recipes.
+    Only use facts present in CONTEXT; do not invent ingredients or titles.
     Return JSON: {{"suggestions": [{{"title": string, "matchScore": number, "missing": [string], "why": string}}]}}
     CONTEXT:
     {context}
@@ -24,6 +25,7 @@ RAG_INSTR_USER = (
     Recipe text:
     {recipe}
     Return JSON: {{"title": string, "recipe": string, "steps": [string], "notes": [string]}}
+    Use ONLY the provided recipe text; do not add steps not present in the text.
     """.strip()
 )
 
@@ -39,5 +41,6 @@ RAG_INGR_USER = (
     {ingredients}
     Return JSON: {{"title": string, "ingredients": [{{"name": string, "quantity": string, "unit": string}}]}}
     If quantity/unit unknown, set empty strings.
+    Copy ingredients from the list as-is (names), do not introduce new items.
     """.strip()
 )

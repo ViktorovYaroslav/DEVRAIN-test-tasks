@@ -1,10 +1,12 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field
-from typing import List, Optional, Any, Dict
+from typing import List, Optional, Any, Dict, Union
+import re
 
 from apps.task2.task import cooking_instructions, required_ingredients
 from apps.task3.task import recommend_recipes, rag_cooking_instructions, rag_required_ingredients
+from apps.task3.retriever import QdrantRetriever
 
 
 class TitleRequest(BaseModel):
@@ -12,7 +14,7 @@ class TitleRequest(BaseModel):
 
 
 class IngredientsRequest(BaseModel):
-    ingredients: List[str] = Field(..., description="List of ingredient names")
+    ingredients: Union[List[str], str] = Field(..., description="List of ingredient names or a comma-separated string")
 
 
 app = FastAPI(title="Recipe Assistant API", version="0.1.0")
@@ -32,6 +34,16 @@ def health() -> Dict[str, str]:
     return {"status": "ok"}
 
 
+@app.on_event("startup")
+def _warmup() -> None:
+    # Warm up embedding model to reduce cold-start latency
+    try:
+        QdrantRetriever().warmup()
+    except Exception:
+        # If warmup fails, we don't want to block startup; detailed logs are in retriever
+        pass
+
+
 @app.post("/task2/instructions")
 def post_instructions(body: TitleRequest) -> Any:
     return cooking_instructions(body.title)
@@ -43,7 +55,21 @@ def post_required_ingredients(body: TitleRequest) -> Any:
 
 @app.post("/task3/recommend")
 def post_task3_recommend(body: IngredientsRequest) -> Any:
-    return recommend_recipes(body.ingredients)
+    def _to_list(val: Union[List[str], str]) -> List[str]:
+        if isinstance(val, list):
+            return [s.strip() for s in val if isinstance(s, str) and s.strip()]
+        # string: prefer comma-split; else split by words and remove common stopwords
+        text = val.strip()
+        if "," in text:
+            return [s.strip() for s in text.split(",") if s.strip()]
+        text = re.sub(r"[\.;:!?]+", " ", text).lower()
+        text = re.sub(r"\s+", " ", text).strip()
+        stop = {"i", "have", "a", "an", "the", "and", "with", "some", "of", "to", "what", "can", "cook"}
+        parts = re.split(r"\s+and\s+|\s+", text)
+        return [w for w in (p.strip() for p in parts) if w and w not in stop]
+
+    ing_list = _to_list(body.ingredients)
+    return recommend_recipes(ing_list)
 
 @app.post("/task3/instructions")
 def post_task3_instructions(body: TitleRequest) -> Any:

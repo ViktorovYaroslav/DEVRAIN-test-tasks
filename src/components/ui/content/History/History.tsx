@@ -24,7 +24,7 @@ const History: FC = () => {
 			<div className="card__material">
 				<ul className="flex flex-col-reverse gap-0.5">
 					{recipes?.map((recipe, index) => (
-						<li key={recipe.title}>
+						<li key={`history-item-${index}`}>
 							<HistoryItem currentIndex={index} recipe={recipe} />
 						</li>
 					))}

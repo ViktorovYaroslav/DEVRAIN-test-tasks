@@ -54,6 +54,7 @@ const ChatForm: FC = () => {
 			reset();
 
 			if (data) {
+				console.log(data);
 				setNewRecipe(data);
 				setActiveRecipeIndex(recipes ? recipes.length : 0);
 			}
