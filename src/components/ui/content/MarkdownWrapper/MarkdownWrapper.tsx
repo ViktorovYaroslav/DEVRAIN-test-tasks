@@ -1,4 +1,8 @@
+import { Suspense } from "react";
+
 import Markdown from "react-markdown";
+
+import { Spinner } from "../../loaders";
 
 import { config } from "./config";
 
@@ -10,9 +14,11 @@ interface Props {
 
 const MarkdownWrapper: FC<Props> = ({ children }) => {
 	return (
-		<div className="markdown-wrapper">
-			<Markdown components={config}>{children}</Markdown>
-		</div>
+		<Suspense fallback={<Spinner />}>
+			<div className="markdown-wrapper">
+				<Markdown components={config}>{children}</Markdown>
+			</div>
+		</Suspense>
 	);
 };
 

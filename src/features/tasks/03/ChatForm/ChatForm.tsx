@@ -11,13 +11,13 @@ import { MODES } from "./constants/modes";
 import { CHAT_FORM_VALIDATION_SCHEMA } from "./constants/validationSchema";
 import { CHAT_FORM_INITIAL_VALUES } from "./constants/initial";
 import { tryCatch } from "@/utils/helpers/promises/tryCatch";
-import { fetchRecipeIngredients, fetchRecipeInstructions } from "@/api/tasks/02/endpoints";
+import { fetchRecipeIngredients, fetchRecipeInstructions, fetchRecipeRecommendations } from "@/api/tasks/03/endpoints";
 import { sendOnEnter } from "@/utils/helpers/form/sendOnEnter";
 import { useRecipes } from "@/context/activeRecipeIndex/hooks";
 import { CHAT_TEXTAREA_PLACEHOLDERS } from "@/constants/options/placeholders";
 
 import type { FC } from "react";
-import type { RecipeItem02 } from "@/types/query/tasks/response";
+import type { RecipeItem03 } from "@/types/query/tasks/response";
 
 const ChatForm: FC = () => {
 	const [mode, setMode] = useState(MODES[0].option);
@@ -38,10 +38,11 @@ const ChatForm: FC = () => {
 		onSubmit: async ({ value }) => {
 			setRecipesLoading(true);
 
-			let callback = async (): Promise<RecipeItem02 | null> => null;
+			let callback = async (): Promise<RecipeItem03 | null> => null;
 
 			if (mode === "instruction") callback = () => fetchRecipeInstructions(value.message);
 			if (mode === "ingredients") callback = () => fetchRecipeIngredients(value.message);
+			if (mode === "recommend") callback = () => fetchRecipeRecommendations(value.message);
 
 			const [data, error] = await tryCatch(callback());
 

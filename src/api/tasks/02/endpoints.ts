@@ -1,6 +1,6 @@
 import { RECIPE_ASSISTANT_TASK2_INGREDIENTS_URL, RECIPE_ASSISTANT_TASK2_INSTRUCTIONS_URL } from "./urls";
 
-import type { RecipeIngredients, RecipeInstruction } from "@/types/query/tasks/02";
+import type { RecipeIngredients, RecipeInstruction } from "@/types/query/tasks/response";
 
 export const fetchRecipeInstructions = async (title: string) => {
 	const response = await fetch(RECIPE_ASSISTANT_TASK2_INSTRUCTIONS_URL, {

@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import { fetchImageByKeyword } from "@/api/unsplash/endpoints";
 
 import type { FC } from "react";
-import type { Ingredient as IngredientType } from "@/types/query/tasks/02";
+import type { Ingredient as IngredientType } from "@/types/query/tasks/response";
 import type { UnsplashPhoto } from "@/api/unsplash/types";
 
 interface Props extends IngredientType {}

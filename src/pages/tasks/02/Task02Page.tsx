@@ -1,5 +1,6 @@
-import { ChatForm, RecipeView, History, TaskSummary } from "@/features/tasks/02";
-import { RecipeProvider } from "@/features/tasks/02/context/activeRecipeIndex";
+import { ChatForm, RecipeView, TaskSummary } from "@/features/tasks/02";
+import { History } from "@/components/ui/content";
+import { RecipeProvider } from "@/context/activeRecipeIndex";
 
 import type { FC } from "react";
 

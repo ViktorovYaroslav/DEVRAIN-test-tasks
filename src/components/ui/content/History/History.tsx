@@ -2,7 +2,7 @@ import { Transition } from "@headlessui/react";
 
 import { HistoryItem } from "./components";
 
-import { useRecipes } from "../context/activeRecipeIndex/hooks";
+import { useRecipes } from "@/context/activeRecipeIndex/hooks";
 
 import type { FC } from "react";
 

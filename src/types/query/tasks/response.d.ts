@@ -16,4 +16,13 @@ export interface RecipeIngredients {
 	ingredients: Ingredient[];
 }
 
-export type RecipeItem = RecipeIngredients | RecipeInstruction;
+export interface RecommendedRecipe {
+	title: string;
+	matchScore: number;
+	missing: string[];
+	why: string;
+}
+
+export type RecipeItem02 = RecipeIngredients | RecipeInstruction;
+
+export type RecipeItem03 = RecipeIngredients | RecipeInstruction | RecommendedRecipe;

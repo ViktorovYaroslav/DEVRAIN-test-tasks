@@ -1,13 +1,13 @@
 import clsx from "clsx";
 
-import { useRecipes } from "../../context/activeRecipeIndex/hooks";
+import { useRecipes } from "@/context/activeRecipeIndex/hooks";
 
 import type { FC } from "react";
-import type { RecipeItem } from "@/types/query/tasks/02";
+import type { RecipeItem02 } from "@/types/query/tasks/response";
 
 interface Props {
 	currentIndex: number;
-	recipe: RecipeItem;
+	recipe: RecipeItem02;
 }
 
 const HistoryItem: FC<Props> = ({ currentIndex, recipe }) => {

@@ -1,7 +1,10 @@
+import { Suspense } from "react";
+
 import { createBrowserRouter } from "react-router";
 import { lazy } from "react";
 
 import { AppLayout } from "@/components/layouts";
+import { Spinner } from "@/components/ui/loaders";
 
 import { TASKS_PATH, TASK_02_PATH, TASK_03_PATH, TASK_04_PATH } from "./paths";
 
@@ -16,15 +19,27 @@ const router = createBrowserRouter([
 		children: [
 			{
 				path: `/${TASKS_PATH}/${TASK_02_PATH}`,
-				element: <Task02Page />,
+				element: (
+					<Suspense fallback={<Spinner />}>
+						<Task02Page />
+					</Suspense>
+				),
 			},
 			{
 				path: `/${TASKS_PATH}/${TASK_03_PATH}`,
-				element: <Task03Page />,
+				element: (
+					<Suspense fallback={<Spinner />}>
+						<Task03Page />
+					</Suspense>
+				),
 			},
 			{
 				path: `/${TASKS_PATH}/${TASK_04_PATH}`,
-				element: <Task04Page />,
+				element: (
+					<Suspense fallback={<Spinner />}>
+						<Task04Page />
+					</Suspense>
+				),
 			},
 		],
 	},
