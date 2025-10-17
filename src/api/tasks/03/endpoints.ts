@@ -4,7 +4,7 @@ import {
 	RECIPE_ASSISTANT_TASK3_RECOMMEND_URL,
 } from "./urls";
 
-import type { RecipeIngredients, RecipeInstruction, RecommendedRecipe } from "@/types/query/tasks/response";
+import type { RecipeIngredients, RecipeInstruction, RecommendedRecipes } from "@/types/query/tasks/response";
 
 export const fetchRecipeInstructions = async (title: string) => {
 	const response = await fetch(RECIPE_ASSISTANT_TASK3_INSTRUCTIONS_URL, {
@@ -72,5 +72,5 @@ export const fetchRecipeRecommendations = async (ingredients: string) => {
 		throw new Error("Failed to fetch recipe recommendations");
 	}
 
-	return response.json() as Promise<RecommendedRecipe>;
+	return response.json() as Promise<RecommendedRecipes>;
 };

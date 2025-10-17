@@ -8,6 +8,7 @@ import { Steps } from "@/components/ui/lists";
 import { SparklesLoader } from "@/components/ui/loaders";
 import { Ingredient, MarkdownWrapper } from "@/components/ui/content";
 import { useRecipes } from "@/context/activeRecipeIndex/hooks";
+import { isRecipeIngredients, isRecipeInstruction, isRecommendedRecipes } from "@/types/query/tasks/guards";
 
 import { VIEW_MODES } from "./components/ViewMode/constants/modes";
 
@@ -64,9 +65,9 @@ const RecipeView: FC = () => {
 
 						{viewMode === "formatted" && (
 							<>
-								{"recipe" in recipe && <p>{recipe.recipe}</p>}
+								{isRecipeInstruction(recipe) && <p>{recipe.recipe}</p>}
 
-								{"notes" in recipe && recipe.notes.length > 0 && (
+								{isRecipeInstruction(recipe) && recipe.notes.length > 0 && (
 									<ul className="list-inside list-disc">
 										{recipe.notes.map((note, index) => (
 											<li key={index}>{note}</li>
@@ -74,11 +75,11 @@ const RecipeView: FC = () => {
 									</ul>
 								)}
 
-								{"steps" in recipe && recipe.steps.length > 0 && (
+								{isRecipeInstruction(recipe) && recipe.steps.length > 0 && (
 									<Steps steps={recipe.steps.map((step, index) => <p key={index}>{step}</p>)} />
 								)}
 
-								{"ingredients" in recipe && recipe.ingredients.length > 0 && (
+								{isRecipeIngredients(recipe) && recipe.ingredients.length > 0 && (
 									<ul className="flex flex-wrap gap-2">
 										{recipe.ingredients.map((ingredient, index) => (
 											<li key={`ingredient-${index}`}>
@@ -88,7 +89,7 @@ const RecipeView: FC = () => {
 									</ul>
 								)}
 
-								{"suggestions" in recipe && recipe.suggestions.length > 0 && (
+								{isRecommendedRecipes(recipe) && recipe.suggestions.length > 0 && (
 									<ul className="space-y-3">
 										{recipe.suggestions.map(({ title, matchScore, missing, why }, index) => (
 											<li key={`suggestion-${index}`}>

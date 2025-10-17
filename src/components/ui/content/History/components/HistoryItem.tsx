@@ -1,6 +1,7 @@
 import clsx from "clsx";
 
 import { useRecipes } from "@/context/activeRecipeIndex/hooks";
+import { isRecipeIngredients, isRecipeInstruction, isRecommendedRecipes } from "@/types/query/tasks/guards";
 
 import type { FC } from "react";
 import type { RecipeItem } from "@/types/query/tasks/response";
@@ -27,9 +28,9 @@ const HistoryItem: FC<Props> = ({ currentIndex, recipe }) => {
 			{"title" in recipe ? recipe.title : "Recommendations"}
 			<span>
 				{" "}
-				({"ingredients" in recipe && "ingredients"}
-				{"recipe" in recipe && "recipe"}
-				{"suggestions" in recipe && "suggestions"})
+				({isRecipeIngredients(recipe) && "ingredients"}
+				{isRecipeInstruction(recipe) && "recipe"}
+				{isRecommendedRecipes(recipe) && "suggestions"})
 			</span>
 		</button>
 	);

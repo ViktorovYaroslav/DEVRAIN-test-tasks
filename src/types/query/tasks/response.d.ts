@@ -16,7 +16,7 @@ export interface RecipeIngredients {
 	ingredients: Ingredient[];
 }
 
-export interface RecommendedRecipe {
+export interface RecommendedRecipes {
 	suggestions: Array<{
 		title: string;
 		matchScore: number;
@@ -25,4 +25,4 @@ export interface RecommendedRecipe {
 	}>;
 }
 
-export type RecipeItem = RecipeIngredients | RecipeInstruction | RecommendedRecipe;
+export type RecipeItem = RecipeIngredients | RecipeInstruction | RecommendedRecipes;
