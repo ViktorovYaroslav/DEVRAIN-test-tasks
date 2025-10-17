@@ -9,6 +9,7 @@ import threading
 from sentence_transformers import SentenceTransformer
 from qdrant_client import QdrantClient
 from qdrant_client.http.models import Filter, FieldCondition, MatchValue
+from qdrant_client.http.exceptions import UnexpectedResponse
 
 
 class QdrantRetriever:
@@ -29,6 +30,7 @@ class QdrantRetriever:
         self._embedder: Optional[SentenceTransformer] = None
         self._lock = threading.Lock()
         self._logger = logging.getLogger(__name__)
+        self._exact_filter_supported = True
 
     def _encode(self, text: str) -> List[float]:
         t0 = time.time()
@@ -84,13 +86,24 @@ class QdrantRetriever:
         vector = self._encode(title)
         t1 = time.time()
         # First, try exact title match via payload filter to avoid picking a different variant
-        exact_filter = Filter(must=[FieldCondition(key="title", match=MatchValue(value=title))])
-        res = self.client.search(
-            collection_name=self.collection,
-            query_vector=vector,
-            limit=top_k,
-            query_filter=exact_filter,
-        )
+        res = []
+        if self._exact_filter_supported:
+            exact_filter = Filter(must=[FieldCondition(key="title", match=MatchValue(value=title))])
+            try:
+                res = self.client.search(
+                    collection_name=self.collection,
+                    query_vector=vector,
+                    limit=top_k,
+                    query_filter=exact_filter,
+                )
+            except UnexpectedResponse as exc:
+                self._exact_filter_supported = False
+                self._logger.warning(
+                    "Exact title filter unavailable; falling back to semantic search. status=%s body=%s",
+                    getattr(exc, "status_code", "?"),
+                    getattr(exc, "body", str(exc)),
+                )
+                res = []
         # Fallback: unfiltered semantic search if nothing matched exactly
         if not res:
             res = self.client.search(collection_name=self.collection, query_vector=vector, limit=top_k)
