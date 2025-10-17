@@ -3,11 +3,11 @@ import clsx from "clsx";
 import { useRecipes } from "@/context/activeRecipeIndex/hooks";
 
 import type { FC } from "react";
-import type { RecipeItem02 } from "@/types/query/tasks/response";
+import type { RecipeItem } from "@/types/query/tasks/response";
 
 interface Props {
 	currentIndex: number;
-	recipe: RecipeItem02;
+	recipe: RecipeItem;
 }
 
 const HistoryItem: FC<Props> = ({ currentIndex, recipe }) => {
@@ -24,7 +24,13 @@ const HistoryItem: FC<Props> = ({ currentIndex, recipe }) => {
 			)}
 			onClick={() => setActiveRecipeIndex(currentIndex)}
 		>
-			{recipe.title} <span>({"ingredients" in recipe ? "ingredients" : "recipe"})</span>
+			{"title" in recipe ? recipe.title : "Recommendations"}
+			<span>
+				{" "}
+				({"ingredients" in recipe && "ingredients"}
+				{"recipe" in recipe && "recipe"}
+				{"suggestions" in recipe && "suggestions"})
+			</span>
 		</button>
 	);
 };

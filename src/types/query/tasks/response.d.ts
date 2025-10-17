@@ -17,12 +17,12 @@ export interface RecipeIngredients {
 }
 
 export interface RecommendedRecipe {
-	title: string;
-	matchScore: number;
-	missing: string[];
-	why: string;
+	suggestions: Array<{
+		title: string;
+		matchScore: number;
+		missing: string[];
+		why: string;
+	}>;
 }
 
-export type RecipeItem02 = RecipeIngredients | RecipeInstruction;
-
-export type RecipeItem03 = RecipeIngredients | RecipeInstruction | RecommendedRecipe;
+export type RecipeItem = RecipeIngredients | RecipeInstruction | RecommendedRecipe;

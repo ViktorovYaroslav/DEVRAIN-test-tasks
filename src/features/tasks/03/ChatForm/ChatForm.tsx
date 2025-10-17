@@ -17,7 +17,7 @@ import { useRecipes } from "@/context/activeRecipeIndex/hooks";
 import { CHAT_TEXTAREA_PLACEHOLDERS } from "@/constants/options/placeholders";
 
 import type { FC } from "react";
-import type { RecipeItem03 } from "@/types/query/tasks/response";
+import type { RecipeItem } from "@/types/query/tasks/response";
 
 const ChatForm: FC = () => {
 	const [mode, setMode] = useState(MODES[0].option);
@@ -38,7 +38,7 @@ const ChatForm: FC = () => {
 		onSubmit: async ({ value }) => {
 			setRecipesLoading(true);
 
-			let callback = async (): Promise<RecipeItem03 | null> => null;
+			let callback = async (): Promise<RecipeItem | null> => null;
 
 			if (mode === "instruction") callback = () => fetchRecipeInstructions(value.message);
 			if (mode === "ingredients") callback = () => fetchRecipeIngredients(value.message);
@@ -54,7 +54,6 @@ const ChatForm: FC = () => {
 			reset();
 
 			if (data) {
-				console.log(data);
 				setNewRecipe(data);
 				setActiveRecipeIndex(recipes ? recipes.length : 0);
 			}

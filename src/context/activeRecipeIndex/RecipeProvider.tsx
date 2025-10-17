@@ -2,9 +2,7 @@ import { useState, createContext } from "react";
 
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 
-import { TASK2_QUERY_KEY } from "@/constants/query/keys";
-
-import type { RecipeItem02 } from "@/types/query/tasks/response";
+import type { RecipeItem } from "@/types/query/tasks/response";
 
 import type { FC, PropsWithChildren } from "react";
 import type { RecipeContextType } from "./types";
@@ -14,15 +12,20 @@ import type { UseQueryResult } from "@tanstack/react-query";
 export const RecipeContext = createContext<RecipeContextType>({
 	activeRecipeIndex: Infinity,
 	recipesLoading: false,
-	query: {} as UseQueryResult<RecipeItem02[] | null>,
+	query: {} as UseQueryResult<RecipeItem[] | null>,
 	setNewRecipe: () => {},
 	setRecipesLoading: () => {},
 	setActiveRecipeIndex: () => {},
 });
 
-export const RecipeProvider: FC<PropsWithChildren> = ({ children }) => {
-	const query = useQuery<RecipeItem02[] | null>({
-		queryKey: [TASK2_QUERY_KEY],
+interface Props extends PropsWithChildren {
+	task: string;
+}
+
+export const RecipeProvider: FC<Props> = ({ children, task }) => {
+	const queryKey = ["tasks", task];
+	const query = useQuery<RecipeItem[] | null>({
+		queryKey: queryKey,
 		queryFn: async () => null,
 		enabled: false,
 	});
@@ -32,8 +35,8 @@ export const RecipeProvider: FC<PropsWithChildren> = ({ children }) => {
 
 	const queryClient = useQueryClient();
 
-	const setNewRecipe = (recipe: RecipeItem02) => {
-		queryClient.setQueryData<RecipeItem02[]>([TASK2_QUERY_KEY], (prev) => (prev ? [...prev, recipe] : [recipe]));
+	const setNewRecipe = (recipe: RecipeItem) => {
+		queryClient.setQueryData<RecipeItem[]>(queryKey, (prev) => (prev ? [...prev, recipe] : [recipe]));
 	};
 
 	return (

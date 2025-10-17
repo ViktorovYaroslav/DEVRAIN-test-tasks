@@ -12,7 +12,7 @@ const AppLayout: FC = () => {
 				<DevRainLogo />
 				<Navigation />
 			</div>
-			<div className="h-screen grow overflow-hidden p-4">
+			<div className="h-screen max-h-screen grow overflow-hidden p-4">
 				<Outlet />
 			</div>
 		</div>
