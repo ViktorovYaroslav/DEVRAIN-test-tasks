@@ -1,34 +1,28 @@
-import { useState } from "react";
-
 import { PaperAirplaneIcon } from "@heroicons/react/24/outline";
 import { useForm } from "@tanstack/react-form";
 import { Transition } from "@headlessui/react";
 
 import { TextArea } from "@/components/ui/inputs/TextArea";
-import { Button, ButtonGroup } from "@/components/ui/buttons";
+import { Button } from "@/components/ui/buttons";
 
-import { MODES } from "./constants/modes";
 import { CHAT_FORM_VALIDATION_SCHEMA } from "./constants/validationSchema";
 import { CHAT_FORM_INITIAL_VALUES } from "./constants/initial";
 import { tryCatch } from "@/utils/helpers/promises/tryCatch";
-import { fetchRecipeIngredients, fetchRecipeInstructions, fetchRecipeRecommendations } from "@/api/tasks/03/endpoints";
+import { fetchChatResponse } from "@/api/tasks/04/endpoints";
 import { sendOnEnter } from "@/utils/helpers/form/sendOnEnter";
-import { useRecipes } from "@/context/recipe/hooks";
+import { useChat } from "@/context/chat/hooks";
 import { CHAT_TEXTAREA_PLACEHOLDERS } from "@/constants/options/placeholders";
 
 import type { FC } from "react";
-import type { RecipeItem } from "@/types/query/tasks/response";
+import type { Message } from "@/types/query/tasks/response";
 
 const ChatForm: FC = () => {
-	const [mode, setMode] = useState(MODES[0].option);
-
 	const {
-		query: { data: recipes },
-		recipesLoading,
-		setActiveRecipeIndex,
-		setNewRecipe,
-		setRecipesLoading,
-	} = useRecipes();
+		query: { data: history },
+		isSending: recipesLoading,
+		setIsSending,
+		appendMessage,
+	} = useChat();
 
 	const { Field, Subscribe, handleSubmit, reset } = useForm({
 		defaultValues: CHAT_FORM_INITIAL_VALUES,
@@ -36,26 +30,21 @@ const ChatForm: FC = () => {
 			onChange: CHAT_FORM_VALIDATION_SCHEMA,
 		},
 		onSubmit: async ({ value }) => {
-			setRecipesLoading(true);
+			setIsSending(true);
 
-			let callback = async (): Promise<RecipeItem | null> => null;
+			const userMessage: Message = { role: "user", content: value.message };
+			appendMessage(userMessage);
+			reset();
 
-			if (mode === "instruction") callback = () => fetchRecipeInstructions(value.message);
-			if (mode === "ingredients") callback = () => fetchRecipeIngredients(value.message);
-			if (mode === "recommend") callback = () => fetchRecipeRecommendations(value.message);
-
-			const [data, error] = await tryCatch(callback());
+			const [data, error] = await tryCatch(fetchChatResponse([...(history ?? []), userMessage]));
 
 			if (error) {
 				console.error(error);
 				return;
 			}
 
-			reset();
-
 			if (data) {
-				setNewRecipe(data);
-				setActiveRecipeIndex(recipes ? recipes.length : 0);
+				appendMessage(data);
 			}
 		},
 	});
@@ -63,7 +52,7 @@ const ChatForm: FC = () => {
 	return (
 		<div className="relative w-full max-w-3xl space-y-3">
 			<Transition
-				show={!recipesLoading && !recipes}
+				show={!recipesLoading && !history?.length}
 				enter="transition-opacity duration-300"
 				enterFrom="opacity-0"
 				enterTo="opacity-100"
@@ -84,7 +73,7 @@ const ChatForm: FC = () => {
 					e.stopPropagation();
 
 					handleSubmit().finally(() => {
-						setRecipesLoading(false);
+						setIsSending(false);
 					});
 				}}
 			>
@@ -97,7 +86,7 @@ const ChatForm: FC = () => {
 								value={field.state.value}
 								onBlur={field.handleBlur}
 								onChange={(e) => field.handleChange(e.target.value)}
-								placeholder={CHAT_TEXTAREA_PLACEHOLDERS[mode]}
+								placeholder={CHAT_TEXTAREA_PLACEHOLDERS.instruction}
 								id="task-chat-form"
 								label="message"
 								hiddenLabel
@@ -127,11 +116,6 @@ const ChatForm: FC = () => {
 					)}
 				</Subscribe>
 			</form>
-
-			<div className="ml-[calc(1.5rem+1px)] flex items-center gap-3">
-				<p className="text-muted-foreground text-sm">Mode:</p>
-				<ButtonGroup items={MODES} onChange={setMode} />
-			</div>
 		</div>
 	);
 };

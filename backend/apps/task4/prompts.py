@@ -18,7 +18,7 @@ ROUTER_USER_PROMPT = (
     1. Inspect the most recent 'user' message. Prefer that message when extracting arguments.
     2. For recommend_recipes, return ingredient names as a list of plain strings.
     3. For instruction/ingredients requests, return the recipe title as a string under the key "title".
-    4. If you cannot determine the intent, return {"def_name": "rag_required_ingredients", "arguments": {"title": ""}} as a safe fallback.
+    4. If you cannot determine the intent, return {{"def_name": "rag_required_ingredients", "arguments": {{"title": ""}}}} as a safe fallback.
 
     Respond with JSON: {{"def_name": string, "arguments": object}}
     """.strip()

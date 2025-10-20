@@ -7,7 +7,6 @@ import type { ChatContextType } from "./types";
 import type { UseQueryResult } from "@tanstack/react-query";
 
 export const ChatContext = createContext<ChatContextType>({
-	history: [],
 	query: {} as UseQueryResult<Message[]>,
 	isSending: false,
 	setIsSending: () => {},
@@ -33,7 +32,6 @@ const ChatProvider: FC<Props> = ({ children, chatId, initialHistory }) => {
 	});
 
 	const queryClient = useQueryClient();
-	const history = query.data ?? [];
 
 	const appendMessage = useCallback(
 		(message: Message) => {
@@ -55,7 +53,6 @@ const ChatProvider: FC<Props> = ({ children, chatId, initialHistory }) => {
 
 	const value = useMemo(
 		() => ({
-			history,
 			query,
 			isSending,
 			setIsSending,

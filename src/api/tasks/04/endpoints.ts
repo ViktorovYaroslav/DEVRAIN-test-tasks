@@ -1,9 +1,11 @@
 import { RECIPE_ASSISTANT_TASK4_CHAT_URL } from "./urls";
 
-import type { Message } from "@/types/query/tasks/response";
+import type { Message, RecipeInstruction, RecipeIngredients, RecommendedRecipes } from "@/types/query/tasks/response";
+
+type ChatResponse = RecipeInstruction | RecipeIngredients | RecommendedRecipes;
 
 type ChatResponsePayload = {
-	response: string;
+	response: ChatResponse;
 };
 
 export const fetchChatResponse = async (history: Message[]): Promise<Message> => {
@@ -20,5 +22,6 @@ export const fetchChatResponse = async (history: Message[]): Promise<Message> =>
 	}
 
 	const data = (await response.json()) as ChatResponsePayload;
-	return { role: "assistant", content: data.response };
+	const content = JSON.stringify(data.response, null, 2);
+	return { role: "assistant", content };
 };

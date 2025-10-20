@@ -1,3 +1,4 @@
+import logging
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field
@@ -94,11 +95,12 @@ def post_task3_ingredients(body: TitleRequest) -> Any:
 
 
 @app.post("/chat")
-def post_chat(body: ChatRequest) -> Dict[str, str]:
+def post_chat(body: ChatRequest) -> Dict[str, Any]:
     try:
-        response_text = _chat_router.route(msg.model_dump() for msg in body.history)
+        response_payload = _chat_router.route(msg.model_dump() for msg in body.history)
     except Exception as exc:
+        logging.exception("/chat handler failed")
         raise HTTPException(status_code=500, detail=str(exc))
-    return {"response": response_text}
+    return {"response": response_payload}
 
 

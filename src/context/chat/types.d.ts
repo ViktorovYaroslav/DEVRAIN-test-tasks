@@ -4,7 +4,6 @@ import type { UseQueryResult } from "@tanstack/react-query";
 import type { Message } from "@/types/query/tasks/response";
 
 export interface ChatContextType {
-	history: Message[];
 	query: UseQueryResult<Message[]>;
 	isSending: boolean;
 	setIsSending: Dispatch<SetStateAction<boolean>>;
