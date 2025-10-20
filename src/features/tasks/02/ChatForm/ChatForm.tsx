@@ -13,7 +13,7 @@ import { CHAT_FORM_INITIAL_VALUES } from "./constants/initial";
 import { tryCatch } from "@/utils/helpers/promises/tryCatch";
 import { fetchRecipeIngredients, fetchRecipeInstructions } from "@/api/tasks/02/endpoints";
 import { sendOnEnter } from "@/utils/helpers/form/sendOnEnter";
-import { useRecipes } from "@/context/activeRecipeIndex/hooks";
+import { useRecipes } from "@/context/recipe/hooks";
 import { CHAT_TEXTAREA_PLACEHOLDERS } from "@/constants/options/placeholders";
 
 import type { FC } from "react";
@@ -97,7 +97,7 @@ const ChatForm: FC = () => {
 								onBlur={field.handleBlur}
 								onChange={(e) => field.handleChange(e.target.value)}
 								placeholder={CHAT_TEXTAREA_PLACEHOLDERS[mode]}
-								id="task2-chat-form"
+								id="task-chat-form"
 								label="message"
 								hiddenLabel
 								minRows={1}

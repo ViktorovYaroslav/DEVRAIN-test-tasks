@@ -1,14 +1,17 @@
+import { useState } from "react";
+
 import { PaperAirplaneIcon } from "@heroicons/react/24/outline";
 import { useForm } from "@tanstack/react-form";
 import { Transition } from "@headlessui/react";
 
 import { TextArea } from "@/components/ui/inputs/TextArea";
-import { Button } from "@/components/ui/buttons";
+import { Button, ButtonGroup } from "@/components/ui/buttons";
 
+import { MODES } from "./constants/modes";
 import { CHAT_FORM_VALIDATION_SCHEMA } from "./constants/validationSchema";
 import { CHAT_FORM_INITIAL_VALUES } from "./constants/initial";
 import { tryCatch } from "@/utils/helpers/promises/tryCatch";
-
+import { fetchRecipeIngredients, fetchRecipeInstructions, fetchRecipeRecommendations } from "@/api/tasks/03/endpoints";
 import { sendOnEnter } from "@/utils/helpers/form/sendOnEnter";
 import { useRecipes } from "@/context/recipe/hooks";
 import { CHAT_TEXTAREA_PLACEHOLDERS } from "@/constants/options/placeholders";
@@ -17,6 +20,8 @@ import type { FC } from "react";
 import type { RecipeItem } from "@/types/query/tasks/response";
 
 const ChatForm: FC = () => {
+	const [mode, setMode] = useState(MODES[0].option);
+
 	const {
 		query: { data: recipes },
 		recipesLoading,
@@ -30,10 +35,14 @@ const ChatForm: FC = () => {
 		validators: {
 			onChange: CHAT_FORM_VALIDATION_SCHEMA,
 		},
-		onSubmit: async () => {
+		onSubmit: async ({ value }) => {
 			setRecipesLoading(true);
 
-			const callback = async (): Promise<RecipeItem | null> => null;
+			let callback = async (): Promise<RecipeItem | null> => null;
+
+			if (mode === "instruction") callback = () => fetchRecipeInstructions(value.message);
+			if (mode === "ingredients") callback = () => fetchRecipeIngredients(value.message);
+			if (mode === "recommend") callback = () => fetchRecipeRecommendations(value.message);
 
 			const [data, error] = await tryCatch(callback());
 
@@ -88,7 +97,7 @@ const ChatForm: FC = () => {
 								value={field.state.value}
 								onBlur={field.handleBlur}
 								onChange={(e) => field.handleChange(e.target.value)}
-								placeholder={CHAT_TEXTAREA_PLACEHOLDERS.instruction}
+								placeholder={CHAT_TEXTAREA_PLACEHOLDERS[mode]}
 								id="task-chat-form"
 								label="message"
 								hiddenLabel
@@ -118,6 +127,11 @@ const ChatForm: FC = () => {
 					)}
 				</Subscribe>
 			</form>
+
+			<div className="ml-[calc(1.5rem+1px)] flex items-center gap-3">
+				<p className="text-muted-foreground text-sm">Mode:</p>
+				<ButtonGroup items={MODES} onChange={setMode} />
+			</div>
 		</div>
 	);
 };

@@ -7,7 +7,7 @@ import { ViewMode } from "./components";
 import { Steps } from "@/components/ui/lists";
 import { SparklesLoader } from "@/components/ui/loaders";
 import { Ingredient, MarkdownWrapper } from "@/components/ui/content";
-import { useRecipes } from "@/context/activeRecipeIndex/hooks";
+import { useRecipes } from "@/context/recipe/hooks";
 import { isRecipeIngredients, isRecipeInstruction, isRecommendedRecipes } from "@/types/query/tasks/guards";
 
 import { VIEW_MODES } from "./components/ViewMode/constants/modes";

@@ -1,6 +1,6 @@
 import clsx from "clsx";
 
-import { useRecipes } from "@/context/activeRecipeIndex/hooks";
+import { useRecipes } from "@/context/recipe/hooks";
 import { isRecipeIngredients, isRecipeInstruction, isRecommendedRecipes } from "@/types/query/tasks/guards";
 
 import type { FC } from "react";
