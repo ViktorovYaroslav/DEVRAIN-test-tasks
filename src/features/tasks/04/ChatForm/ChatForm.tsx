@@ -4,6 +4,7 @@ import { Transition } from "@headlessui/react";
 
 import { TextArea } from "@/components/ui/inputs/TextArea";
 import { Button } from "@/components/ui/buttons";
+import { SparklesLoader } from "@/components/ui/loaders";
 
 import { CHAT_FORM_VALIDATION_SCHEMA } from "./constants/validationSchema";
 import { CHAT_FORM_INITIAL_VALUES } from "./constants/initial";
@@ -65,6 +66,22 @@ const ChatForm: FC = () => {
 				</h1>
 			</Transition>
 
+			<Transition
+				show={recipesLoading}
+				as="div"
+				className="-top-8 -left-9 absolute flex items-center"
+				enter="transition-opacity duration-300"
+				enterFrom="opacity-0"
+				enterTo="opacity-100"
+				leave="transition-opacity duration-300"
+				leaveFrom="opacity-100"
+				leaveTo="opacity-0"
+			>
+				<div className="scale-[25%]">
+					<SparklesLoader />
+				</div>
+				<p className="-ml-6 text-sm">Generating...</p>
+			</Transition>
 			<form
 				className="card__material flex w-full items-end gap-2"
 				onKeyDown={sendOnEnter}
@@ -105,7 +122,7 @@ const ChatForm: FC = () => {
 							className="!text-white"
 							square
 							disabled={isPristine || !canSubmit || isSubmitting}
-							loading={isSubmitting}
+							loading={isSubmitting || recipesLoading}
 							loadingText=""
 							spinnerProps={{
 								size: "md",

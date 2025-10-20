@@ -3,14 +3,14 @@ import { useState } from "react";
 import clsx from "clsx";
 import { Transition } from "@headlessui/react";
 
-import { ViewMode } from "./components";
+import { ViewMode } from "../ViewMode";
 import { Steps } from "@/components/ui/lists";
 import { SparklesLoader } from "@/components/ui/loaders";
 import { Ingredient, MarkdownWrapper } from "@/components/ui/content";
 import { useRecipes } from "@/context/recipe/hooks";
 import { isRecipeIngredients, isRecipeInstruction, isRecommendedRecipes } from "@/types/query/tasks/guards";
 
-import { VIEW_MODES } from "./components/ViewMode/constants/modes";
+import { VIEW_MODES } from "../ViewMode/constants/modes";
 
 import type { FC } from "react";
 

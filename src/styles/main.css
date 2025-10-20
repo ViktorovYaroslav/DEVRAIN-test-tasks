@@ -35,7 +35,7 @@
 
 html,
 body {
-	@apply h-full text-gray-700 font-montserrat;
+	@apply h-full text-gray-700 font-montserrat scroll-smooth;
 }
 
 a,
