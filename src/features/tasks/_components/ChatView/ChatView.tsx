@@ -15,12 +15,21 @@ export const ChatView: FC = () => {
 	} = useChat();
 
 	const containerRef = useRef<HTMLDivElement>(null);
+	const contentRef = useRef<HTMLDivElement>(null);
 
 	useEffect(() => {
-		if (containerRef.current) {
-			containerRef.current.scrollTop = containerRef.current.scrollHeight;
-		}
-	}, [history]);
+		const container = containerRef.current;
+		const content = contentRef.current;
+		if (!container || !content) return;
+
+		const observer = new ResizeObserver(() => {
+			container.scrollTop = container.scrollHeight;
+		});
+
+		observer.observe(content);
+
+		return () => observer.disconnect();
+	}, []);
 
 	return (
 		<div
@@ -29,7 +38,7 @@ export const ChatView: FC = () => {
 			})}
 		>
 			<div ref={containerRef} className="h-full min-h-0 overflow-auto scroll-smooth">
-				<div className="flex flex-col gap-16">
+				<div ref={contentRef} className="flex flex-col gap-16">
 					{history?.map(({ content, role }) => (
 						<Fragment key={v1()}>
 							{role === "user" && <UserMessage content={content} />}

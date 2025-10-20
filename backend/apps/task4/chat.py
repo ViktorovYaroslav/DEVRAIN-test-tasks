@@ -210,12 +210,13 @@ class ChatRouter:
         items: List[Dict[str, str]] = []
         if isinstance(items_src, list):
             for item in items_src:
-                if not isinstance(item, dict):
-                    continue
-                name = str(item.get("name", "")).strip()
-                quantity = str(item.get("quantity", "")).strip()
-                unit = str(item.get("unit", "")).strip()
-                items.append({"name": name, "quantity": quantity, "unit": unit})
+                if isinstance(item, dict):
+                    name = str(item.get("name", "")).strip()
+                    quantity = str(item.get("quantity", "")).strip()
+                    unit = str(item.get("unit", "")).strip()
+                    items.append({"name": name, "quantity": quantity, "unit": unit})
+                elif isinstance(item, str):
+                    items.append({"name": item.strip(), "quantity": "", "unit": ""})
 
         return {"title": title, "ingredients": items}
 

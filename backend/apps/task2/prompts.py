@@ -18,7 +18,8 @@ INGR_USER = (
     """
     List of ingredients for the recipe titled: "{title}".
     Return JSON with the schema: {{"title": string, "ingredients": [{{"name": string, "quantity": string, "unit": string}}]}}
-    If there are no exact quantities, leave quantity and unit as empty strings.
+    Extract any leading quantity and unit tokens into their respective fields (e.g., "2 Tbsp. sugar" -> quantity "2", unit "Tbsp.", name "sugar").
+    If there are no exact quantities or units, leave those fields as empty strings.
     """.strip()
 )
 

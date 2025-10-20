@@ -40,7 +40,13 @@ RAG_INGR_USER = (
     Ingredients list:
     {ingredients}
     Return JSON: {{"title": string, "ingredients": [{{"name": string, "quantity": string, "unit": string}}]}}
-    If quantity/unit unknown, set empty strings.
-    Copy ingredients from the list as-is (names), do not introduce new items.
+    For each input line, separate any leading amount and unit into the "quantity" and "unit" fields.
+    Units may include abbreviations such as qt., tsp., Tbsp., c., oz., lb., g, ml, etc.
+    Example mapping:
+    - Input: "3 Tbsp. salt" -> {{"name": "salt", "quantity": "3", "unit": "Tbsp."}}
+    - Input: "1 1/2 qt. cubed rind" -> {{"name": "cubed rind", "quantity": "1 1/2", "unit": "qt."}}
+    - Input: "cloves" -> {{"name": "cloves", "quantity": "", "unit": ""}}
+    Preserve the ingredient wording after removing the quantity/unit prefix in the "name" field.
+    Do not invent ingredients that are not listed. Return valid JSON only.
     """.strip()
 )

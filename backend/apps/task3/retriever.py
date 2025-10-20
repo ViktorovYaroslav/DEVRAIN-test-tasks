@@ -3,8 +3,10 @@ from __future__ import annotations
 import os
 import time
 import logging
-from typing import Any, Dict, List, Optional
 import threading
+import re
+from typing import Any, Dict, List, Optional
+from difflib import SequenceMatcher
 
 from sentence_transformers import SentenceTransformer
 from qdrant_client import QdrantClient
@@ -80,7 +82,7 @@ class QdrantRetriever:
             })
         return out
 
-    def get_by_title(self, title: str, top_k: int = 1) -> Optional[Dict[str, Any]]:
+    def get_by_title(self, title: str, top_k: int = 5) -> Optional[Dict[str, Any]]:
         # Embed title and search top-1; robust to minor variations
         t0 = time.time()
         vector = self._encode(title)
@@ -115,12 +117,37 @@ class QdrantRetriever:
         )
         if not res:
             return None
-        r = res[0]
+        best = self._pick_best_match(title, res)
         return {
-            "id": r.id,
-            "score": float(r.score),
-            "title": r.payload.get("title"),
-            "ingredients": r.payload.get("ingredients", []),
-            "ner": r.payload.get("ner", []),
-            "recipe": r.payload.get("recipe", ""),
+            "id": best.id,
+            "score": float(best.score),
+            "title": best.payload.get("title"),
+            "ingredients": best.payload.get("ingredients", []),
+            "ner": best.payload.get("ner", []),
+            "recipe": best.payload.get("recipe", ""),
         }
+
+    def _pick_best_match(self, query: str, hits: List[Any]) -> Any:
+        norm_query = self._normalize_title(query)
+        best = hits[0]
+        best_sim = -1.0
+        for hit in hits:
+            candidate_title = hit.payload.get("title") or ""
+            sim = self._title_similarity(norm_query, self._normalize_title(candidate_title))
+            if sim > best_sim:
+                best = hit
+                best_sim = sim
+        self._logger.debug("get_by_title best match sim=%.3f title=%s", best_sim, best.payload.get("title"))
+        return best
+
+    @staticmethod
+    def _normalize_title(text: str) -> str:
+        lowered = text.lower()
+        collapsed = re.sub(r"[^a-z0-9]+", " ", lowered)
+        return re.sub(r"\s+", " ", collapsed).strip()
+
+    @staticmethod
+    def _title_similarity(query_norm: str, candidate_norm: str) -> float:
+        if not query_norm or not candidate_norm:
+            return 0.0
+        return SequenceMatcher(a=query_norm, b=candidate_norm).ratio()
