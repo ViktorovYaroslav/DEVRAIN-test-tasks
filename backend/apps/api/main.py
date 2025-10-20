@@ -1,4 +1,4 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field
 from typing import List, Optional, Any, Dict, Union
@@ -7,6 +7,7 @@ import re
 from apps.task2.task import cooking_instructions, required_ingredients
 from apps.task3.task import recommend_recipes, rag_cooking_instructions, rag_required_ingredients
 from apps.task3.retriever import QdrantRetriever
+from apps.task4.chat import ChatRouter
 
 
 class TitleRequest(BaseModel):
@@ -15,6 +16,15 @@ class TitleRequest(BaseModel):
 
 class IngredientsRequest(BaseModel):
     ingredients: Union[List[str], str] = Field(..., description="List of ingredient names or a comma-separated string")
+
+
+class ChatMessage(BaseModel):
+    role: str
+    content: str
+
+
+class ChatRequest(BaseModel):
+    history: List[ChatMessage] = Field(..., description="Conversation history including previous assistant replies")
 
 
 app = FastAPI(title="Recipe Assistant API", version="0.1.0")
@@ -42,6 +52,9 @@ def _warmup() -> None:
     except Exception:
         # If warmup fails, we don't want to block startup; detailed logs are in retriever
         pass
+
+
+_chat_router = ChatRouter()
 
 
 @app.post("/task2/instructions")
@@ -78,5 +91,14 @@ def post_task3_instructions(body: TitleRequest) -> Any:
 @app.post("/task3/ingredients")
 def post_task3_ingredients(body: TitleRequest) -> Any:
     return rag_required_ingredients(body.title)
+
+
+@app.post("/chat")
+def post_chat(body: ChatRequest) -> Dict[str, str]:
+    try:
+        response_text = _chat_router.route(msg.model_dump() for msg in body.history)
+    except Exception as exc:
+        raise HTTPException(status_code=500, detail=str(exc))
+    return {"response": response_text}
 
 

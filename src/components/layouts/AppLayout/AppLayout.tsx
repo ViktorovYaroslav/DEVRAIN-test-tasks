@@ -13,7 +13,9 @@ const AppLayout: FC = () => {
 				<Navigation />
 			</div>
 			<div className="h-screen max-h-screen grow overflow-hidden p-4">
-				<Outlet />
+				<div className="relative flex size-full flex-col items-center justify-center gap-4">
+					<Outlet />
+				</div>
 			</div>
 		</div>
 	);

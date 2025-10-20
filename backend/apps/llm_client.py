@@ -49,14 +49,21 @@ class LLMClient:
                 return json.loads(snippet)
             raise
 
-    def complete_json(self, system_prompt: str, user_prompt: str, temperature: float = 0.3, max_retries: int = 2) -> Dict[str, Any]:
+    def complete_json(
+        self,
+        system_prompt: str,
+        user_prompt: str,
+        temperature: float = 0.3,
+        max_retries: int = 2,
+        model: Optional[str] = None,
+    ) -> Dict[str, Any]:
         last_err: Optional[Exception] = None
         for _ in range(max_retries + 1):
             try:
                 if self.provider == "anthropic":
                     # Anthropic JSON mode via content blocks
                     msg = self.client.messages.create(
-                        model=self.model,
+                        model=model or self.model,
                         temperature=temperature,
                         system=system_prompt,
                         max_tokens=2048,

@@ -7,16 +7,14 @@ import type { FC } from "react";
 
 const Task03Page: FC = () => {
 	return (
-		<div className="relative flex size-full flex-col items-center justify-end gap-4">
-			<RecipeProvider task="03">
-				<RecipeView />
-				<ChatForm />
-				<div className="fixed top-4 right-4 flex w-full max-w-xs flex-col gap-4">
-					<TaskSummary />
-					<History />
-				</div>
-			</RecipeProvider>
-		</div>
+		<RecipeProvider task="03">
+			<RecipeView />
+			<ChatForm />
+			<div className="fixed top-4 right-4 flex w-full max-w-xs flex-col gap-4">
+				<TaskSummary />
+				<History />
+			</div>
+		</RecipeProvider>
 	);
 };
 
