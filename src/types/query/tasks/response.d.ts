@@ -26,3 +26,8 @@ export interface RecommendedRecipes {
 }
 
 export type RecipeItem = RecipeIngredients | RecipeInstruction | RecommendedRecipes;
+
+export interface Message {
+	role: "user" | "assistant";
+	content: string;
+}
