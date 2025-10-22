@@ -1,6 +1,7 @@
+import copy
 import json
 import os
-from typing import Any, Dict, Optional
+from typing import Any, Dict, List, Optional
 
 from dotenv import load_dotenv
 from pathlib import Path
@@ -49,6 +50,15 @@ class LLMClient:
                 return json.loads(snippet)
             raise
 
+    def _collect_text(self, response: Any) -> str:
+        content_blocks = getattr(response, "content", []) or []
+        parts: List[str] = []
+        for block in content_blocks:
+            text = getattr(block, "text", None)
+            if text:
+                parts.append(text)
+        return "".join(parts)
+
     def complete_json(
         self,
         system_prompt: str,
@@ -56,31 +66,48 @@ class LLMClient:
         temperature: float = 0.3,
         max_retries: int = 2,
         model: Optional[str] = None,
+        max_tokens: int = 2048,
     ) -> Dict[str, Any]:
+        blocks = [{"type": "text", "text": user_prompt}]
+        return self.complete_json_from_blocks(
+            system_prompt,
+            blocks,
+            temperature=temperature,
+            max_retries=max_retries,
+            model=model,
+            max_tokens=max_tokens,
+        )
+
+    def complete_json_from_blocks(
+        self,
+        system_prompt: str,
+        content_blocks: List[Dict[str, Any]],
+        temperature: float = 0.3,
+        max_retries: int = 2,
+        model: Optional[str] = None,
+        max_tokens: int = 2048,
+    ) -> Dict[str, Any]:
+        base_blocks = [copy.deepcopy(block) for block in content_blocks]
+        instruction_tail = ["Return ONLY valid minified JSON."]
         last_err: Optional[Exception] = None
+
         for _ in range(max_retries + 1):
             try:
-                if self.provider == "anthropic":
-                    # Anthropic JSON mode via content blocks
-                    msg = self.client.messages.create(
-                        model=model or self.model,
-                        temperature=temperature,
-                        system=system_prompt,
-                        max_tokens=2048,
-                        messages=[{"role": "user", "content": user_prompt + "\n\nReturn ONLY valid minified JSON."}],
-                    )
-                    # Extract text
-                    content = ""
-                    for block in getattr(msg, "content", []) or []:
-                        # block.type can be 'text' in SDK
-                        text = getattr(block, "text", None)
-                        if text:
-                            content += text
-                    content = content or "{}"
-                    return self._parse_json(content)
-                else:
+                if self.provider != "anthropic":
                     raise ValueError("Unsupported provider")
-            except Exception as e:
-                last_err = e
-                user_prompt = user_prompt + "\nRespond strictly with JSON only."
+                user_blocks = [copy.deepcopy(block) for block in base_blocks]
+                for instruction in instruction_tail:
+                    user_blocks.append({"type": "text", "text": instruction})
+                msg = self.client.messages.create(
+                    model=model or self.model,
+                    temperature=temperature,
+                    system=system_prompt,
+                    max_tokens=max_tokens,
+                    messages=[{"role": "user", "content": user_blocks}],
+                )
+                content = self._collect_text(msg) or "{}"
+                return self._parse_json(content)
+            except Exception as exc:
+                last_err = exc
+                instruction_tail.append("Respond strictly with JSON only.")
         raise RuntimeError(f"Failed to get valid JSON from LLM: {last_err}")

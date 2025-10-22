@@ -9,6 +9,7 @@ from apps.task2.task import cooking_instructions, required_ingredients
 from apps.task3.task import recommend_recipes, rag_cooking_instructions, rag_required_ingredients
 from apps.task3.retriever import QdrantRetriever
 from apps.task4.chat import ChatRouter
+from apps.full_demo.chat import full_demo_response
 
 
 class TitleRequest(BaseModel):
@@ -26,6 +27,24 @@ class ChatMessage(BaseModel):
 
 class ChatRequest(BaseModel):
     history: List[ChatMessage] = Field(..., description="Conversation history including previous assistant replies")
+
+
+class ImagePayload(BaseModel):
+    data: str = Field(..., description="Base64-encoded image data")
+    media_type: str = Field(..., alias="mediaType", description="MIME type, e.g. image/jpeg")
+
+    class Config:
+        populate_by_name = True
+
+
+class FullDemoMessage(BaseModel):
+    role: str
+    content: Optional[str] = ""
+    images: Optional[List[ImagePayload]] = None
+
+
+class FullDemoChatRequest(BaseModel):
+    history: List[FullDemoMessage] = Field(..., description="Conversation history with optional images in latest user turn")
 
 
 app = FastAPI(title="Recipe Assistant API", version="0.1.0")
@@ -100,6 +119,16 @@ def post_chat(body: ChatRequest) -> Dict[str, Any]:
         response_payload = _chat_router.route(msg.model_dump() for msg in body.history)
     except Exception as exc:
         logging.exception("/chat handler failed")
+        raise HTTPException(status_code=500, detail=str(exc))
+    return {"response": response_payload}
+
+
+@app.post("/full-demo/chat")
+def post_full_demo_chat(body: FullDemoChatRequest) -> Dict[str, Any]:
+    try:
+        response_payload = full_demo_response(msg.model_dump() for msg in body.history)
+    except Exception as exc:
+        logging.exception("/full-demo/chat handler failed")
         raise HTTPException(status_code=500, detail=str(exc))
     return {"response": response_payload}
 
