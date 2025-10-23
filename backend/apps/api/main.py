@@ -123,12 +123,12 @@ def post_chat(body: ChatRequest) -> Dict[str, Any]:
     return {"response": response_payload}
 
 
-@app.post("/full-demo/chat")
+@app.post("/full-demo")
 def post_full_demo_chat(body: FullDemoChatRequest) -> Dict[str, Any]:
     try:
         response_payload = full_demo_response(msg.model_dump() for msg in body.history)
     except Exception as exc:
-        logging.exception("/full-demo/chat handler failed")
+        logging.exception("/full-demo handler failed")
         raise HTTPException(status_code=500, detail=str(exc))
     return {"response": response_payload}
 
