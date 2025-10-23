@@ -7,7 +7,7 @@ from typing import Any, Dict, Iterable, List, Optional
 
 from ..llm_client import LLMClient
 from ..task3.retriever import QdrantRetriever
-from .prompts import FULL_DEMO_SYSTEM_PROMPT, FULL_DEMO_USER_TEMPLATE
+from .prompts import FULL_DEMO_CONTEXT_BLOCK, FULL_DEMO_SYSTEM_PROMPT
 
 
 FullDemoImage = Dict[str, str]
@@ -43,12 +43,14 @@ class FullDemoChatEngine:
             recipe_candidate,
         )
 
-        content_blocks = self._build_content_blocks(messages, latest_user, context_payload)
+        conversation_messages = self._build_messages(messages, context_payload)
+        if not conversation_messages:
+            return self._markdown_fallback("I could not prepare the conversation for the model.")
 
         try:
-            response = self._llm.complete_json_from_blocks(
+            response = self._llm.complete_json_from_messages(
                 FULL_DEMO_SYSTEM_PROMPT,
-                content_blocks,
+                conversation_messages,
                 temperature=0.2,
                 max_tokens=2048,
             )
@@ -185,40 +187,44 @@ class FullDemoChatEngine:
             payload["recipe_candidate"] = recipe_doc
         return payload
 
-    def _build_content_blocks(
+    def _build_messages(
         self,
         messages: List[Dict[str, Any]],
-        latest_user: Dict[str, Any],
         context_payload: Dict[str, Any],
     ) -> List[Dict[str, Any]]:
-        blocks: List[Dict[str, Any]] = []
-        for image in latest_user["images"]:
-            blocks.append({
-                "type": "image",
-                "source": {
-                    "type": "base64",
-                    "media_type": image["media_type"],
-                    "data": image["data"],
-                },
-            })
-        history_tail = messages[-6:]
-        history_repr = [
-            {
-                "role": msg["role"],
-                "content": self._truncate_text(msg["content"], 800),
-            }
-            for msg in history_tail
-        ]
-        latest_user_text = self._truncate_text(latest_user["content"], 1200)
+        tail = messages[-8:]
+        conversation: List[Dict[str, Any]] = []
+        for msg in tail:
+            blocks: List[Dict[str, Any]] = []
+            if msg["role"] == "user":
+                for image in msg["images"]:
+                    blocks.append({
+                        "type": "image",
+                        "source": {
+                            "type": "base64",
+                            "media_type": image["media_type"],
+                            "data": image["data"],
+                        },
+                    })
+                if msg["content"]:
+                    blocks.append({"type": "text", "text": self._truncate_text(msg["content"], 1200)})
+            else:
+                if msg["content"]:
+                    blocks.append({"type": "text", "text": self._truncate_text(msg["content"], 1200)})
+            if not blocks:
+                continue
+            conversation.append({"role": msg["role"], "content": blocks})
+
         context_json = json.dumps(context_payload, ensure_ascii=False)
-        history_json = json.dumps(history_repr, ensure_ascii=False)
-        user_text = FULL_DEMO_USER_TEMPLATE.format(
-            history=history_json,
-            latest_user=latest_user_text,
-            context=context_json,
-        )
-        blocks.append({"type": "text", "text": user_text})
-        return blocks
+        context_text = FULL_DEMO_CONTEXT_BLOCK.format(context=context_json)
+        context_block = {"type": "text", "text": context_text.strip()}
+
+        if conversation and conversation[-1]["role"] == "user":
+            conversation[-1]["content"].append(context_block)
+        else:
+            conversation.append({"role": "user", "content": [context_block]})
+
+        return conversation
 
     def _truncate_text(self, text: str, max_len: int) -> str:
         if len(text) <= max_len:

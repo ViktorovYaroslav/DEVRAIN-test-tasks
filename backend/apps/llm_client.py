@@ -87,7 +87,26 @@ class LLMClient:
         model: Optional[str] = None,
         max_tokens: int = 2048,
     ) -> Dict[str, Any]:
-        base_blocks = [copy.deepcopy(block) for block in content_blocks]
+        messages = [{"role": "user", "content": content_blocks}]
+        return self.complete_json_from_messages(
+            system_prompt,
+            messages,
+            temperature=temperature,
+            max_retries=max_retries,
+            model=model,
+            max_tokens=max_tokens,
+        )
+
+    def complete_json_from_messages(
+        self,
+        system_prompt: str,
+        messages: List[Dict[str, Any]],
+        temperature: float = 0.3,
+        max_retries: int = 2,
+        model: Optional[str] = None,
+        max_tokens: int = 2048,
+    ) -> Dict[str, Any]:
+        base_messages = [copy.deepcopy(msg) for msg in messages]
         instruction_tail = ["Return ONLY valid minified JSON."]
         last_err: Optional[Exception] = None
 
@@ -95,15 +114,19 @@ class LLMClient:
             try:
                 if self.provider != "anthropic":
                     raise ValueError("Unsupported provider")
-                user_blocks = [copy.deepcopy(block) for block in base_blocks]
+                prompt_messages = [copy.deepcopy(msg) for msg in base_messages]
                 for instruction in instruction_tail:
-                    user_blocks.append({"type": "text", "text": instruction})
+                    if not self._append_instruction(prompt_messages, instruction):
+                        prompt_messages.append({
+                            "role": "user",
+                            "content": [{"type": "text", "text": instruction}],
+                        })
                 msg = self.client.messages.create(
                     model=model or self.model,
                     temperature=temperature,
                     system=system_prompt,
                     max_tokens=max_tokens,
-                    messages=[{"role": "user", "content": user_blocks}],
+                    messages=prompt_messages,
                 )
                 content = self._collect_text(msg) or "{}"
                 return self._parse_json(content)
@@ -111,3 +134,14 @@ class LLMClient:
                 last_err = exc
                 instruction_tail.append("Respond strictly with JSON only.")
         raise RuntimeError(f"Failed to get valid JSON from LLM: {last_err}")
+
+    def _append_instruction(self, messages: List[Dict[str, Any]], instruction: str) -> bool:
+        for msg in reversed(messages):
+            if msg.get("role") == "user":
+                content = msg.setdefault("content", [])
+                if not isinstance(content, list):
+                    content = [content]  # type: ignore[list-item]
+                content.append({"type": "text", "text": instruction})
+                msg["content"] = content
+                return True
+        return False
