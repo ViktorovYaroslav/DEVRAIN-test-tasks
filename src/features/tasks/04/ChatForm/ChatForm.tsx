@@ -15,7 +15,7 @@ import { useChat } from "@/context/chat/hooks";
 import { CHAT_TEXTAREA_PLACEHOLDERS } from "@/constants/options/placeholders";
 
 import type { FC } from "react";
-import type { Message } from "@/types/query/tasks/response";
+import type { UserMessage } from "@/types/query/tasks/response";
 
 const ChatForm: FC = () => {
 	const {
@@ -33,7 +33,7 @@ const ChatForm: FC = () => {
 		onSubmit: async ({ value }) => {
 			setIsSending(true);
 
-			const userMessage: Message = { role: "user", content: value.message };
+			const userMessage: UserMessage = { role: "user", content: value.message };
 			appendMessage(userMessage);
 			reset();
 
