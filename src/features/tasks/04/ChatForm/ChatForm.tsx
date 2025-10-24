@@ -2,7 +2,7 @@ import { PaperAirplaneIcon } from "@heroicons/react/24/outline";
 import { useForm } from "@tanstack/react-form";
 import { Transition } from "@headlessui/react";
 
-import { TextArea } from "@/components/ui/inputs/TextArea";
+import { TextArea } from "@/components/ui/inputs";
 import { Button } from "@/components/ui/buttons";
 import { SparklesLoader } from "@/components/ui/loaders";
 

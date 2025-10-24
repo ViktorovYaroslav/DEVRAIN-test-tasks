@@ -1,21 +1,22 @@
-import { PaperAirplaneIcon } from "@heroicons/react/24/outline";
+import { PaperAirplaneIcon, PhotoIcon } from "@heroicons/react/24/outline";
 import { useForm } from "@tanstack/react-form";
 import { Transition } from "@headlessui/react";
 
-import { TextArea } from "@/components/ui/inputs/TextArea";
+import { TextArea, FileInput } from "@/components/ui/inputs";
 import { Button } from "@/components/ui/buttons";
 import { SparklesLoader } from "@/components/ui/loaders";
 
 import { CHAT_FORM_VALIDATION_SCHEMA } from "./constants/validationSchema";
 import { CHAT_FORM_INITIAL_VALUES } from "./constants/initial";
-import { tryCatch } from "@/utils/helpers/promises/tryCatch";
+import { tryCatch, readFileAsBase64 } from "@/utils/helpers/promises";
 import { fetchChatResponse } from "@/api/tasks/full-demo/endpoints";
 import { sendOnEnter } from "@/utils/helpers/form/sendOnEnter";
 import { useChat } from "@/context/chat/hooks";
 import { CHAT_TEXTAREA_PLACEHOLDERS } from "@/constants/options/placeholders";
+import { VALID_IMAGE_MIME_TYPES } from "./constants/mime";
 
 import type { FC } from "react";
-import type { Message } from "@/types/query/tasks/response";
+import type { FullDemoUserMessage } from "@/types/query/full-demo/types";
 
 const ChatForm: FC = () => {
 	const {
@@ -33,7 +34,21 @@ const ChatForm: FC = () => {
 		onSubmit: async ({ value }) => {
 			setIsSending(true);
 
-			const userMessage: Message = { role: "user", content: value.message };
+			const images = value.images.length
+				? await Promise.all(
+						value.images.map(async (file) => ({
+							data: await readFileAsBase64(file),
+							mediaType: file.type,
+						}))
+					)
+				: undefined;
+
+			const userMessage: FullDemoUserMessage = {
+				role: "user",
+				content: value.message,
+				images,
+			};
+
 			appendMessage(userMessage);
 			reset();
 
@@ -44,9 +59,7 @@ const ChatForm: FC = () => {
 				return;
 			}
 
-			if (data) {
-				appendMessage(data);
-			}
+			appendMessage(data);
 		},
 	});
 
@@ -80,8 +93,10 @@ const ChatForm: FC = () => {
 				<div className="scale-[25%]">
 					<SparklesLoader />
 				</div>
+
 				<p className="-ml-6 text-sm">Generating...</p>
 			</Transition>
+
 			<form
 				className="card__material flex w-full items-end gap-2"
 				onKeyDown={sendOnEnter}
@@ -94,6 +109,25 @@ const ChatForm: FC = () => {
 					});
 				}}
 			>
+				<Field
+					name="images"
+					children={({ name, handleBlur, handleChange }) => (
+						<FileInput
+							name={name}
+							id={name}
+							onBlur={handleBlur}
+							onChange={(event) => {
+								handleChange(Array.from(event.target.files ?? []));
+							}}
+							Icon={PhotoIcon}
+							className="px-0"
+							multiple
+							accept={VALID_IMAGE_MIME_TYPES.join(",")}
+							label="upload images"
+						/>
+					)}
+				/>
+
 				<div className="grow">
 					<Field
 						name="message"
