@@ -1,7 +1,7 @@
 import { RECIPE_ASSISTANT_FULL_DEMO_URL } from "./urls";
 
 import type { RecipeInstruction, RecipeIngredients, RecommendedRecipes } from "@/types/query/tasks/response";
-import type { FullDemoMessage } from "@/types/query/tasks/full-demo";
+import type { FullDemoMessage } from "@/types/query/full-demo/types";
 
 type ChatResponse = RecipeInstruction | RecipeIngredients | RecommendedRecipes;
 

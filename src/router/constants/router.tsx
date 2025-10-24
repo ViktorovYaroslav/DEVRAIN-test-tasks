@@ -11,12 +11,21 @@ import { TASKS_PATH, TASK_02_PATH, TASK_03_PATH, TASK_04_PATH } from "./paths";
 const Task02Page = lazy(() => import("@/pages/tasks/02/Task02Page"));
 const Task03Page = lazy(() => import("@/pages/tasks/03/Task03Page"));
 const Task04Page = lazy(() => import("@/pages/tasks/04/Task04Page"));
+const FullDemoPage = lazy(() => import("@/pages/tasks/full-demo/FullDemoPage"));
 
 const router = createBrowserRouter([
 	{
 		path: "/",
 		element: <AppLayout />,
 		children: [
+			{
+				index: true,
+				element: (
+					<Suspense fallback={<Spinner />}>
+						<FullDemoPage />
+					</Suspense>
+				),
+			},
 			{
 				path: `/${TASKS_PATH}/${TASK_02_PATH}`,
 				element: (
