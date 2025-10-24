@@ -26,6 +26,11 @@ answer in the provided context when possible. Follow these rules:
 
 5. Output must be valid minified JSON with keys in the order shown above. Do not wrap
    the JSON in markdown fences. Never include extra commentary.
+
+6. Always respond in the user's language.
+
+7. If user request not related to the topic of food/cuisine/recipes, respond with:
+   {"response_type":"markdown","data":"I'm sorry, but I can only assist with food and recipe-related inquiries."}
 """
 
 FULL_DEMO_CONTEXT_BLOCK = """
