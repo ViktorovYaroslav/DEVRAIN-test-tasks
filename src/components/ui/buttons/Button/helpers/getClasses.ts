@@ -42,8 +42,8 @@ export const getClasses: GetClasses = (options, className?: CommonProps["classNa
 			"bg-white hover:bg-primary-50 hover:text-primary-600 text-gray-900 ring ring-inset ring-gray-100":
 				variant === "secondary" && isLink,
 
-			"bg-transparent text-gray-500 enabled:hover:text-gray-700": variant === "icon",
-			"bg-transparent text-gray-500 hover:text-gray-700": variant === "icon" && isLink,
+			"bg-transparent text-gray-500 enabled:hover:text-primary-600": variant === "icon",
+			"bg-transparent text-gray-500 hover:text-primary-600": variant === "icon" && isLink,
 
 			"bg-red-700 text-white enabled:hover:bg-red-800 focus:outline-red-700 dark:focus:outline-red-300":
 				variant === "danger",

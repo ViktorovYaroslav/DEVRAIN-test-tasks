@@ -5,6 +5,7 @@ import { Transition } from "@headlessui/react";
 import { TextArea, FileInput } from "@/components/ui/inputs";
 import { Button } from "@/components/ui/buttons";
 import { SparklesLoader } from "@/components/ui/loaders";
+import { FilesList } from "./components";
 
 import { CHAT_FORM_VALIDATION_SCHEMA } from "./constants/validationSchema";
 import { CHAT_FORM_INITIAL_VALUES } from "./constants/initial";
@@ -26,7 +27,7 @@ const ChatForm: FC = () => {
 		appendMessage,
 	} = useChat();
 
-	const { Field, Subscribe, handleSubmit, reset } = useForm({
+	const { Field, Subscribe, handleSubmit, reset, setFieldValue } = useForm({
 		defaultValues: CHAT_FORM_INITIAL_VALUES,
 		validators: {
 			onChange: CHAT_FORM_VALIDATION_SCHEMA,
@@ -98,7 +99,7 @@ const ChatForm: FC = () => {
 			</Transition>
 
 			<form
-				className="card__material flex w-full items-end gap-2"
+				className="card__material w-full"
 				onKeyDown={sendOnEnter}
 				onSubmit={(e) => {
 					e.preventDefault();
@@ -109,63 +110,83 @@ const ChatForm: FC = () => {
 					});
 				}}
 			>
-				<Field
-					name="images"
-					children={({ name, handleBlur, handleChange }) => (
-						<FileInput
-							name={name}
-							id={name}
-							onBlur={handleBlur}
-							onChange={(event) => {
-								handleChange(Array.from(event.target.files ?? []));
-							}}
-							Icon={PhotoIcon}
-							className="px-0"
-							multiple
-							accept={VALID_IMAGE_MIME_TYPES.join(",")}
-							label="upload images"
-						/>
+				<Subscribe selector={(state) => [state.values]}>
+					{([values]) => (
+						<>
+							{values.images && values.images.length > 0 && (
+								<FilesList
+									files={values.images}
+									onRemove={(index) => {
+										setFieldValue(
+											"images",
+											values.images.filter((_, i) => i !== index)
+										);
+									}}
+								/>
+							)}
+						</>
 					)}
-				/>
+				</Subscribe>
 
-				<div className="grow">
+				<div className="flex w-full items-end gap-2">
 					<Field
-						name="message"
-						children={(field) => (
-							<TextArea
-								name={field.name}
-								value={field.state.value}
-								onBlur={field.handleBlur}
-								onChange={(e) => field.handleChange(e.target.value)}
-								placeholder={CHAT_TEXTAREA_PLACEHOLDERS.instruction}
-								id="task-chat-form"
-								label="message"
-								hiddenLabel
-								minRows={1}
-								maxRows={8}
-								className="!py-2 resize-none"
+						name="images"
+						children={({ name, handleBlur, handleChange }) => (
+							<FileInput
+								name={name}
+								id={name}
+								onBlur={handleBlur}
+								onChange={(event) => {
+									handleChange(Array.from(event.target.files ?? []));
+								}}
+								Icon={PhotoIcon}
+								className="px-0"
+								multiple
+								accept={VALID_IMAGE_MIME_TYPES.join(",")}
+								label="upload images"
 							/>
 						)}
 					/>
-				</div>
 
-				<Subscribe selector={(state) => [state.canSubmit, state.isSubmitting, state.isPristine]}>
-					{([canSubmit, isSubmitting, isPristine]) => (
-						<Button
-							type="submit"
-							className="!text-white"
-							square
-							disabled={isPristine || !canSubmit || isSubmitting}
-							loading={isSubmitting || recipesLoading}
-							loadingText=""
-							spinnerProps={{
-								size: "md",
-							}}
-						>
-							<PaperAirplaneIcon className="size-5" />
-						</Button>
-					)}
-				</Subscribe>
+					<div className="grow">
+						<Field
+							name="message"
+							children={(field) => (
+								<TextArea
+									name={field.name}
+									value={field.state.value}
+									onBlur={field.handleBlur}
+									onChange={(e) => field.handleChange(e.target.value)}
+									placeholder={CHAT_TEXTAREA_PLACEHOLDERS.instruction}
+									id="task-chat-form"
+									label="message"
+									hiddenLabel
+									minRows={1}
+									maxRows={8}
+									className="!py-2 resize-none"
+								/>
+							)}
+						/>
+					</div>
+
+					<Subscribe selector={(state) => [state.canSubmit, state.isSubmitting, state.isPristine]}>
+						{([canSubmit, isSubmitting, isPristine]) => (
+							<Button
+								type="submit"
+								className="!text-white"
+								square
+								disabled={isPristine || !canSubmit || isSubmitting}
+								loading={isSubmitting || recipesLoading}
+								loadingText=""
+								spinnerProps={{
+									size: "md",
+								}}
+							>
+								<PaperAirplaneIcon className="size-5" />
+							</Button>
+						)}
+					</Subscribe>
+				</div>
 			</form>
 		</div>
 	);
