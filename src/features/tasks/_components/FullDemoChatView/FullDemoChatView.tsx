@@ -1,4 +1,4 @@
-import { Fragment, useMemo, useRef, useEffect } from "react";
+import { Fragment, useMemo, useRef } from "react";
 
 import clsx from "clsx";
 import { v1 } from "uuid";
@@ -6,9 +6,10 @@ import { v1 } from "uuid";
 import { UserMessage, AssistantMessage } from "./components";
 
 import { useChat } from "@/context/chat/hooks";
-import type { FullDemoChatResponse, FullDemoMessage } from "@/types/query/full-demo/types";
+import { useResizeScroll } from "@/utils/hooks/useResizeScroll";
 
 import type { FC } from "react";
+import type { FullDemoChatResponse, FullDemoMessage } from "@/types/query/full-demo/types";
 
 const FullDemoChatView: FC = () => {
 	const {
@@ -37,19 +38,7 @@ const FullDemoChatView: FC = () => {
 	const containerRef = useRef<HTMLDivElement>(null);
 	const contentRef = useRef<HTMLDivElement>(null);
 
-	useEffect(() => {
-		const container = containerRef.current;
-		const content = contentRef.current;
-		if (!container || !content) return;
-
-		const observer = new ResizeObserver(() => {
-			container.scrollTop = container.scrollHeight;
-		});
-
-		observer.observe(content);
-
-		return () => observer.disconnect();
-	}, []);
+	useResizeScroll(containerRef, contentRef, history ?? []);
 
 	return (
 		<div
