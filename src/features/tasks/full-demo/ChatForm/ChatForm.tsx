@@ -15,6 +15,7 @@ import { sendOnEnter } from "@/utils/helpers/form/sendOnEnter";
 import { useChat } from "@/context/chat/hooks";
 import { CHAT_TEXTAREA_PLACEHOLDERS } from "@/constants/options/placeholders";
 import { VALID_IMAGE_MIME_TYPES } from "./constants/mime";
+import { generateFileKey } from "@/utils/helpers/files/base64Storage";
 
 import type { FC } from "react";
 import type { FullDemoUserMessage } from "@/types/query/full-demo/types";
@@ -131,13 +132,29 @@ const ChatForm: FC = () => {
 				<div className="flex w-full items-end gap-2">
 					<Field
 						name="images"
-						children={({ name, handleBlur, handleChange }) => (
+						children={({ name, handleBlur, handleChange, state }) => (
 							<FileInput
 								name={name}
 								id={name}
 								onBlur={handleBlur}
 								onChange={(event) => {
-									handleChange(Array.from(event.target.files ?? []));
+									const selectedFiles = Array.from(event.target.files ?? []);
+									if (!selectedFiles.length) {
+										return;
+									}
+
+									const existingFiles = state.value ?? [];
+									const merged = [...existingFiles, ...selectedFiles];
+									const seen = new Map<string, File>();
+									for (const file of merged) {
+										const key = generateFileKey(file);
+										if (!seen.has(key)) {
+											seen.set(key, file);
+										}
+									}
+
+									handleChange(Array.from(seen.values()));
+									event.target.value = "";
 								}}
 								Icon={PhotoIcon}
 								className="px-0"

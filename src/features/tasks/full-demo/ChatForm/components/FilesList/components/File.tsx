@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/buttons";
 import { Spinner } from "@/components/ui/loaders";
 import { XMarkIcon } from "@heroicons/react/24/outline";
 
-import { setToBase64Storage, getFromBase64Storage, removeFromBase64Storage } from "@/utils/helpers/files/base64Storage";
+import { setToBase64Storage, getFromBase64Storage } from "@/utils/helpers/files/base64Storage";
 
 import type { FC } from "react";
 
@@ -36,7 +36,6 @@ const File: FC<Props> = ({ file, index, onRemove }) => {
 	}, [file]);
 
 	const handleRemove = () => {
-		removeFromBase64Storage(file);
 		onRemove?.(index);
 	};
 
@@ -53,7 +52,9 @@ const File: FC<Props> = ({ file, index, onRemove }) => {
 			{previewSrc ? (
 				<img src={previewSrc} alt={file.name} className="size-full rounded-md object-cover" />
 			) : (
-				<Spinner />
+				<div className="flex size-12 items-center justify-center">
+					<Spinner />
+				</div>
 			)}
 
 			<Button
