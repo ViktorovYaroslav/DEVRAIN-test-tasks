@@ -23,7 +23,7 @@ const SidePanel: FC<Props> = ({ isOpen, onClose, direction = "left", children })
 			leaveTo="opacity-0"
 		>
 			<div className="fixed inset-0 z-1">
-				<button type="button" className="absolute inset-0 bg-gray-900/25" onClick={onClose} />
+				<button type="button" className="absolute inset-0 bg-gray-900/25" onClick={onClose} aria-label="Close panel" />
 				<div
 					className={clsx(
 						"h-full w-3xs space-y-8 border-gray-100 border-r bg-white p-4",

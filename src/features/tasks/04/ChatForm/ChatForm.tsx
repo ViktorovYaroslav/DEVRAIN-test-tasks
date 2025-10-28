@@ -130,7 +130,8 @@ const ChatForm: FC = () => {
 								size: "md",
 							}}
 						>
-							<PaperAirplaneIcon className="size-5" />
+							<span className="sr-only">Send message</span>
+							<PaperAirplaneIcon className="size-5" aria-hidden="true" />
 						</Button>
 					)}
 				</Subscribe>

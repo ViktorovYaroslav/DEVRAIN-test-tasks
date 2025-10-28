@@ -6,12 +6,12 @@
    "scripts": {
       "dev": "vite",
       "build": "tsc -b && vite build",
+      "preview": "vite preview",
       "lint": "npx @biomejs/biome lint --write",
       "format": "npx @biomejs/biome format --write",
       "check": "npx @biomejs/biome check --write",
       "typecheck": "tsc --noEmit -p tsconfig.app.json",
       "prepare": "husky",
-      "preview": "vite preview",
       "backend:docker:build": "docker build -t recipe-assistant-backend ./backend",
       "backend:docker:run": "docker run -d --rm --name recipe-assistant-backend --env-file backend/.env.local -p 8000:8000 recipe-assistant-backend",
       "backend:docker:stop": "docker stop recipe-assistant-backend",

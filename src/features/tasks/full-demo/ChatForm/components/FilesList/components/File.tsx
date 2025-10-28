@@ -65,7 +65,8 @@ const File: FC<Props> = ({ file, index, onRemove }) => {
 				square
 				onClick={handleRemove}
 			>
-				<XMarkIcon className="size-3" />
+				<span className="sr-only">Remove file {file.name}</span>
+				<XMarkIcon className="size-3" aria-hidden="true" />
 			</Button>
 		</div>
 	);
