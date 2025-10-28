@@ -42,7 +42,7 @@ const FullDemoChatView: FC = () => {
 
 	return (
 		<div
-			className={clsx("relative min-h-0 w-full max-w-3xl opacity-0 transition-all duration-400 ease-out", {
+			className={clsx("relative min-h-0 w-full max-w-3xl shrink opacity-0 transition-all duration-400 ease-out", {
 				"min-h-0 shrink grow opacity-100": parsedHistory.length > 0,
 			})}
 		>

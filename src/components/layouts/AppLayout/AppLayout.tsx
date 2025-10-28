@@ -2,7 +2,6 @@ import { useState } from "react";
 import { Outlet } from "react-router";
 
 import { Bars3BottomLeftIcon } from "@heroicons/react/24/outline";
-import { Transition } from "@headlessui/react";
 
 import { Button } from "@/components/ui/buttons";
 import { DevRainLogo } from "@/components/ui/logos";
@@ -19,29 +18,20 @@ const AppLayout: FC = () => {
 				<DevRainLogo />
 				<Navigation />
 			</div>
-			<div className="relative h-screen max-h-screen grow overflow-hidden px-12 py-4 md:px-4">
-				<Transition
-					as="div"
-					className="relative z-10"
-					show={isMobileNavOpen}
-					enter="transition-opacity duration-200 ease-out"
-					enterFrom="opacity-0"
-					enterTo="opacity-100"
-					leave="transition-opacity duration-200 ease-out"
-					leaveFrom="opacity-100"
-					leaveTo="opacity-0"
-				>
-					<MobileNavigation isOpen={isMobileNavOpen} onClose={() => setIsMobileNavOpen(false)} />
-				</Transition>
+			<div className="relative h-screen max-h-screen grow overflow-hidden px-4 xs:px-8 py-4">
+				<div className="flex h-full flex-col">
+					<div className="pb-4 md:hidden">
+						<Button className="pl-0" variant="icon" square onClick={() => setIsMobileNavOpen((prev) => !prev)}>
+							<Bars3BottomLeftIcon className="size-6" aria-hidden="true" />
+							<span className="sr-only">Toggle navigation</span>
+						</Button>
+					</div>
 
-				<div className="fixed top-4 left-2 block md:hidden">
-					<Button variant="icon" square onClick={() => setIsMobileNavOpen((prev) => !prev)}>
-						<Bars3BottomLeftIcon className="size-6" aria-hidden="true" />
-						<span className="sr-only">Toggle navigation</span>
-					</Button>
-				</div>
-				<div className="relative flex size-full flex-col items-center justify-center gap-4">
-					<Outlet />
+					<MobileNavigation isOpen={isMobileNavOpen} onClose={() => setIsMobileNavOpen(false)} />
+
+					<div className="relative mt-0 flex flex-1 flex-col items-center justify-center gap-4 overflow-hidden md:mt-14 2xl:mt-0">
+						<Outlet />
+					</div>
 				</div>
 			</div>
 		</div>

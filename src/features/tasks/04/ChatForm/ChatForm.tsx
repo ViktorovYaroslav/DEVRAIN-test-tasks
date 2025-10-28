@@ -5,6 +5,7 @@ import { Transition } from "@headlessui/react";
 import { TextArea } from "@/components/ui/inputs";
 import { Button } from "@/components/ui/buttons";
 import { SparklesLoader } from "@/components/ui/loaders";
+import { ChatTitle } from "@/components/ui/content";
 
 import { CHAT_FORM_VALIDATION_SCHEMA } from "./constants/validationSchema";
 import { CHAT_FORM_INITIAL_VALUES } from "./constants/initial";
@@ -53,6 +54,7 @@ const ChatForm: FC = () => {
 	return (
 		<div className="relative w-full max-w-3xl space-y-3">
 			<Transition
+				as="div"
 				show={!recipesLoading && !history?.length}
 				enter="transition-opacity duration-300"
 				enterFrom="opacity-0"
@@ -61,9 +63,7 @@ const ChatForm: FC = () => {
 				leaveFrom="opacity-100"
 				leaveTo="opacity-0"
 			>
-				<h1 className="-top-10 -translate-x-1/2 absolute left-1/2 w-max text-center font-light text-2xl">
-					What do you want to cook today?
-				</h1>
+				<ChatTitle title="What do you want to cook today?" />
 			</Transition>
 
 			<Transition

@@ -31,6 +31,9 @@
 
 	/* FONTS */
 	--font-montserrat: "Montserrat", sans-serif;
+
+	/* SCREENS */
+	--breakpoint-xs: 30rem; /* 480px */
 }
 
 html,

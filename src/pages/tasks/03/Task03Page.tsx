@@ -10,7 +10,7 @@ const Task03Page: FC = () => {
 		<RecipeProvider task="03">
 			<RecipeView />
 			<ChatForm />
-			<div className="fixed top-4 right-4 flex w-full max-w-xs flex-col gap-4">
+			<div className="!w-fit fixed top-4 right-4 flex max-w-xs items-center gap-4 md:flex-col md:items-start">
 				<TaskSummary />
 				<History />
 			</div>

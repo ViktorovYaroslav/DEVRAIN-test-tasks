@@ -10,7 +10,7 @@ const Task04Page: FC = () => {
 		<ChatProvider chatId="task-04-chat">
 			<ChatView />
 			<ChatForm />
-			<div className="fixed top-4 right-4 flex w-full max-w-xs flex-col gap-4">
+			<div className="!w-fit fixed top-4 right-4 flex max-w-xs flex-col gap-4">
 				<TaskSummary />
 			</div>
 		</ChatProvider>
