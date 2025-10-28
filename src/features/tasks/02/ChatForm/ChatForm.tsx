@@ -3,6 +3,7 @@ import { useState } from "react";
 import { PaperAirplaneIcon } from "@heroicons/react/24/outline";
 import { useForm } from "@tanstack/react-form";
 import { Transition } from "@headlessui/react";
+import { toast } from "react-toastify";
 
 import { TextArea } from "@/components/ui/inputs";
 import { Button, ButtonGroup } from "@/components/ui/buttons";
@@ -47,7 +48,8 @@ const ChatForm: FC = () => {
 			const [data, error] = await tryCatch(callback());
 
 			if (error) {
-				console.error(error);
+				toast.error("An error occurred while fetching the recipe. Please try again.");
+				setRecipesLoading(false);
 				return;
 			}
 

@@ -1,6 +1,7 @@
 import { PaperAirplaneIcon, PhotoIcon } from "@heroicons/react/24/outline";
 import { useForm } from "@tanstack/react-form";
 import { Transition } from "@headlessui/react";
+import { toast } from "react-toastify";
 
 import { TextArea, FileInput } from "@/components/ui/inputs";
 import { Button } from "@/components/ui/buttons";
@@ -58,7 +59,8 @@ const ChatForm: FC = () => {
 			const [data, error] = await tryCatch(fetchChatResponse([...(history ?? []), userMessage]));
 
 			if (error) {
-				console.error(error);
+				toast.error("An error occurred while fetching the recipe. Please try again.");
+				setIsSending(false);
 				return;
 			}
 

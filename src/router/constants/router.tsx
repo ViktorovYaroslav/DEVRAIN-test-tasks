@@ -1,7 +1,5 @@
-import { Suspense } from "react";
-
+import { Suspense, lazy } from "react";
 import { createBrowserRouter } from "react-router";
-import { lazy } from "react";
 
 import { AppLayout } from "@/components/layouts";
 import { Spinner } from "@/components/ui/loaders";

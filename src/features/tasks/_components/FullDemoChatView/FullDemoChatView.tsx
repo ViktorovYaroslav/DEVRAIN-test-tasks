@@ -7,9 +7,10 @@ import { UserMessage, AssistantMessage } from "./components";
 
 import { useChat } from "@/context/chat/hooks";
 import { useResizeScroll } from "@/utils/hooks/useResizeScroll";
+import { parseAssistantContent } from "./helpers";
 
 import type { FC } from "react";
-import type { FullDemoChatResponse, FullDemoMessage } from "@/types/query/full-demo/types";
+import type { FullDemoMessage } from "@/types/query/full-demo/types";
 
 const FullDemoChatView: FC = () => {
 	const {
@@ -19,21 +20,6 @@ const FullDemoChatView: FC = () => {
 	const parsedHistory = useMemo(() => {
 		return (history ?? []).map((message) => message as FullDemoMessage);
 	}, [history]);
-
-	const parseAssistantContent = (raw: string): FullDemoChatResponse => {
-		try {
-			const parsed = JSON.parse(raw) as FullDemoChatResponse;
-			if (parsed && typeof parsed === "object" && "response_type" in parsed) {
-				return parsed;
-			}
-		} catch {
-			// Swallow parsing errors and fall back to markdown rendering
-		}
-		return {
-			response_type: "markdown",
-			data: raw,
-		};
-	};
 
 	const containerRef = useRef<HTMLDivElement>(null);
 	const contentRef = useRef<HTMLDivElement>(null);
@@ -50,6 +36,7 @@ const FullDemoChatView: FC = () => {
 				<div ref={contentRef} className="flex flex-col gap-16">
 					{parsedHistory.map((message) => {
 						const key = v1();
+
 						if (message.role === "user") {
 							return (
 								<Fragment key={key}>
@@ -57,7 +44,9 @@ const FullDemoChatView: FC = () => {
 								</Fragment>
 							);
 						}
+
 						const assistantContent = parseAssistantContent(message.content);
+
 						return (
 							<Fragment key={key}>
 								<AssistantMessage content={assistantContent} />

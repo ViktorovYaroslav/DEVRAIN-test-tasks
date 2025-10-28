@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Outlet } from "react-router";
 
 import { Bars3BottomLeftIcon } from "@heroicons/react/24/outline";
+import { ToastContainer } from "react-toastify";
 
 import { Button } from "@/components/ui/buttons";
 import { DevRainLogo } from "@/components/ui/logos";
@@ -14,10 +15,13 @@ const AppLayout: FC = () => {
 
 	return (
 		<div className="flex min-h-screen bg-gray-50">
+			<ToastContainer position="top-right" autoClose={3500} hideProgressBar={true} />
+
 			<div className="hidden basis-3xs space-y-8 border-gray-100 border-r bg-white p-4 md:block">
 				<DevRainLogo />
 				<Navigation />
 			</div>
+
 			<div className="relative h-screen max-h-screen grow overflow-hidden px-4 xs:px-8 py-4">
 				<div className="flex h-full flex-col">
 					<div className="pb-4 md:hidden">
