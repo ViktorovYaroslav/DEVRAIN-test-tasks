@@ -19,6 +19,8 @@ permissions:
 jobs:
   build-and-push:
     runs-on: ubuntu-latest
+    env:
+      OWNER_LC: ${{ toLower(github.repository_owner) }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -33,7 +35,7 @@ jobs:
         uses: docker/login-action@v3
         with:
           registry: ghcr.io
-          username: ${{ github.repository_owner }}
+          username: ${{ env.OWNER_LC }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Build and push image
@@ -43,14 +45,16 @@ jobs:
           file: ./backend/Dockerfile
           push: true
           tags: |
-            ghcr.io/${{ github.repository_owner }}/devrain-test-tasks-backend:latest
-            ghcr.io/${{ github.repository_owner }}/devrain-test-tasks-backend:${{ github.sha }}
-          cache-from: type=registry,ref=ghcr.io/${{ github.repository_owner }}/devrain-test-tasks-backend:buildcache
-          cache-to: type=registry,ref=ghcr.io/${{ github.repository_owner }}/devrain-test-tasks-backend:buildcache,mode=max
+            ghcr.io/${{ env.OWNER_LC }}/devrain-test-tasks-backend:latest
+            ghcr.io/${{ env.OWNER_LC }}/devrain-test-tasks-backend:${{ github.sha }}
+          cache-from: type=registry,ref=ghcr.io/${{ env.OWNER_LC }}/devrain-test-tasks-backend:buildcache
+          cache-to: type=registry,ref=ghcr.io/${{ env.OWNER_LC }}/devrain-test-tasks-backend:buildcache,mode=max
 
   deploy-railway:
     needs: build-and-push
     runs-on: ubuntu-latest
+    env:
+      OWNER_LC: ${{ toLower(github.repository_owner) }}
     steps:
       - name: Install Railway CLI
         run: npm install -g @railway/cli
@@ -62,4 +66,4 @@ jobs:
         run: |
           railway login --token "$RAILWAY_TOKEN"
           railway deploy --service "$RAILWAY_SERVICE" \
-            --image ghcr.io/${{ github.repository_owner }}/devrain-test-tasks-backend:latest
+            --image ghcr.io/${{ env.OWNER_LC }}/devrain-test-tasks-backend:latest
