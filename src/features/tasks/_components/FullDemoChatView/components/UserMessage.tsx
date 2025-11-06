@@ -19,6 +19,7 @@ const UserMessage: FC<Props> = ({ content, images }) => {
 								src={`data:${mediaType};base64,${data}`}
 								alt={`user upload ${index + 1}`}
 								className="max-h-24 w-auto object-cover"
+								height={96}
 							/>
 						</li>
 					))}

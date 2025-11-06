@@ -26,6 +26,7 @@ const Ingredient: FC<Props> = ({ name, quantity, unit }) => {
 					src={image.urls.small || image.urls.regular}
 					alt={image.alt_description ?? name}
 					className="aspect-square h-20 w-auto rounded-2xl object-cover"
+					height={80}
 				/>
 			)}
 
