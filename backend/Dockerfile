@@ -6,8 +6,10 @@ COPY requirements.txt ./
 RUN pip install --no-cache-dir --upgrade pip setuptools wheel \
     && pip install --no-cache-dir -r requirements.txt
 
-# Pre-download sentence-transformers model to avoid cold-start latency
-RUN python -c "from sentence_transformers import SentenceTransformer; SentenceTransformer('sentence-transformers/all-MiniLM-L6-v2')"
+# Persist Hugging Face caches on mounted volume (Railway volume recommended)
+ENV TRANSFORMERS_CACHE=/data/hf-cache \
+    SENTENCE_TRANSFORMERS_HOME=/data/sentence-transformers
+RUN mkdir -p "$TRANSFORMERS_CACHE" "$SENTENCE_TRANSFORMERS_HOME"
 
 # Copy application code
 COPY apps ./apps
