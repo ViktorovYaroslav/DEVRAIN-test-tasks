@@ -72,5 +72,4 @@ jobs:
           RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
           RAILWAY_SERVICE: ${{ secrets.RAILWAY_SERVICE }}
         run: |
-          railway deploy --service "$RAILWAY_SERVICE" \
-            --image ghcr.io/${{ env.OWNER_LC }}/devrain-test-tasks-backend:latest
+          railway redeploy --service "$RAILWAY_SERVICE" --yes
